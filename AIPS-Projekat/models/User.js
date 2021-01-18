@@ -32,10 +32,7 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now 
     },
-    figure:
-    { 
-        type: Schema.Types.ObjectId, ref: 'Figura',
-    }
+    figure:[{ type: Schema.Types.ObjectId, ref: 'Figura' }]
     
 });
 
