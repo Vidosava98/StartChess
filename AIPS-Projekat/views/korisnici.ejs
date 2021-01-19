@@ -18,7 +18,8 @@
     <style type="text/css">
         i
         { 
-          color: rgb(123, 234, 174) 
+          color: rgb(221, 43, 43) 
+          
         }
         #isMap
         {
@@ -30,8 +31,8 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    
-        <a class="navbar-brand" href="#">Kucne zurke</a>
+      <!-- color: rgb(123, 234, 174)  -->
+        
  
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -62,7 +63,9 @@
                 <h5 class="mb-1">Informacije o korisniku</h5>
                 <form action="/users/delete" method="POST">
                 <small class="text-muted">Datum prijavljivaja: <%=users.date.getDate()%>.<%=users.date.getMonth()%>.<%=users.date.getFullYear()%>.</small>
-              <!-- </div> -->
+                </br>
+                <small class="text-muted">Poslednja odigrana partija: <%=users.lastConnection.getDate()%>.<%=users.lastConnection.getMonth()%>.<%=users.lastConnection.getFullYear()%>.</small>
+                <!-- </div> -->
              
               <p class="mb-1">Korisničko ime: <%=users.name%></br>Email: <%=users.email%></p>
               <input class="nevidljivo" name="id" value="<%=users._id%>"></input>

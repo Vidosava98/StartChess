@@ -18,7 +18,8 @@ router.get("/users/profile", ensureAuthenticated, (req, res) => {
     name: req.user.name,
     email: req.user.email,
     date: req.user.date,
-    slikaKorisnika: req.user.slikaKorisnika
+    slikaKorisnika: req.user.slikaKorisnika,
+    lastConnection: req.user.lastConnection
   });
 });
 
@@ -28,6 +29,7 @@ router.get("/users/korisnici", ensureAuthenticated, (req, res) => {
     res.render("korisnici", {
       users: users,
       name: req.user.name,
+      lastConnection: req.user.lastConnection
     });
   });
 });

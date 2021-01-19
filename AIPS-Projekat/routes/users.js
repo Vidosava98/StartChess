@@ -13,7 +13,7 @@ router.get("/vratisvekorisnike", (req, res) => {
 });
 
 
-//vrati korisnika sa odredjenim id-em
+
 //vrati korisnika sa odredjenim id-em
 //http://localhost:3000/users/korisnikpoid/6004894e3ab64056685ce99c
 router.get("/korisnikpoid/:id", (req, res) => {
@@ -115,7 +115,7 @@ router.post("/profilkorisnika", (req, res) => {
 //Register
 
  router.post("/registracija", (req, res) => {
-  // upload.single("slikaKorisnika"),
+ 
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
