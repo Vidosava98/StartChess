@@ -32,6 +32,12 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now 
     },
+    color:
+    {
+        type:String,
+        reuired:false
+
+    },
     figure:[{ type: Schema.Types.ObjectId, ref: 'Figura' }]
     
 });

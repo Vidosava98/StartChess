@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const Figura = require("../models/Figura");
 const passport = require("passport");
 
 //vrati sve korisnike
@@ -72,6 +73,28 @@ router.post("/kreirajUsera", (req, res) => {
  res.json(sacuvajuser);
 });
 
+// Unesi podatke u toku igre, odnosno figure i boju igraca
+// http://localhost:3000/users/updateUser/6004cda827cb95527c6e66a8/white/6005bb52223eeb0b64c76d4f
+//preko POSTMAN-A
+router.post("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
+  var figura = new Figura({_id: req.params.idfigure});
+  User.findById(req.params.iduser)
+  .then((user) => {
+    if (user != null) {
+      user.figure.push(figura);
+      user.color=req.params.boja;
+      const sacuvajuser = user.save();
+      res.json(sacuvajuser);
+    } else {
+      res.send("Ne user sa tim id-em");
+    }
+  })
+  .catch((err) => console.log(err));
+  
+ });
+
+
+
 //kreiraj korisnika unosom parametra
 //http://localhost:3000/users/kreirajUsera/Jana/jana99@gmail.com/jana99
 //preko POSTMANA
@@ -84,6 +107,11 @@ router.post("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
   const sacuvajuser = user.save();
   res.json(sacuvajuser);
  });
+
+
+
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 //Login page
