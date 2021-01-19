@@ -20,6 +20,17 @@ router.post("/pokreniPartiju", (req,res)=>
 
 });
 
+//Izbrisi partijuu
+//http://localhost:3000/game/delete/
+router.post("/delete/:id", (req, res) => {
+  Game.findByIdAndDelete( {_id : req.params.id},function (err, result) {
+    if (err) {
+      res.send("Dogodio se izuzetak");
+    } else {
+     console.log("Izbrisana partija");
+    }
+  } );
+});
 
 //POKRENI NOVU PARTIJU ,Sa Korisnicima, FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/pokreniIgru/600488249fd82214fc6b3f6f/6004cda827cb95527c6e66a8

@@ -4,6 +4,17 @@ const bcrypt = require("bcryptjs");
 const Figura = require("../models/Figura");
 const passport = require("passport");
 
+//izbrisi figuru
+//http://localhost:3000/figura/delete/600484411a009d33c023410d
+router.post("/delete/:id", (req, res) => {
+  Figura.findByIdAndDelete( {_id : req.params.id},function (err, result) {
+    if (err) {
+      res.send("Dogodio se izuzetak");
+    } else {
+     console.log("Izbrisana figura");
+    }
+  } );
+});
 
 // Unesi podatke jedne figure hardkodirano
 //http://localhost:3000/figura/unesipodatke
