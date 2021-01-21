@@ -30,7 +30,7 @@ Chat.find({playerName:req.params.name})
 .catch((err)=>console.log(err));
 });
 
-//Vrati sve poruke jednog korisnika  hardokidarno
+//Vrati sve poruke jednog korisnika 
 //http://localhost:3000/chat/vratiPorukuKorisnika/60049ca2fb226326dc557b1a
 //http://localhost:3000/chat/vratiPorukuKorisnika/6004cda827cb95527c6e66a8
 router.get("/vratiPorukuKorisnika/:id",(req,res)=>{

@@ -16,7 +16,7 @@ router.get("/vratisvekorisnike", (req, res) => {
 
 
 //vrati korisnika sa odredjenim id-em
-//http://localhost:3000/users/korisnikpoid/6004894e3ab64056685ce99c
+//http://localhost:3000/users/korisnikpoid/600820e96d406743d0284129
 router.get("/korisnikpoid/:id", (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
@@ -30,9 +30,9 @@ router.get("/korisnikpoid/:id", (req, res) => {
     .catch((err) => console.log(err));
 });
 //vrati korisnika po emailu
-//http://localhost:3000/users/korisnikSaMailom
+//http://localhost:3000/users/korisnikSaMailom/
 router.get("/korisnikSaMailom", (req, res) => {
-  User.findOne({email:"maja99@gmail.com"})
+  User.findOne({email:"arsic.vida@gmail.com"})
     .then((user) => {
       
       if (user != null) {
@@ -44,7 +44,7 @@ router.get("/korisnikSaMailom", (req, res) => {
     .catch((err) => console.log(err));
 });
 //Vraca json podatke korisnika sa imenom(hardkodirano)
-//http://localhost:3000/users/korisnikSaImenom
+//http://localhost:3000/users/korisnikSaImenom/
 router.get("/korisnikSaImenom",(req,res)=>{
   User.findOne({name:"Maja"})
   .then((user)=>
@@ -52,7 +52,7 @@ router.get("/korisnikSaImenom",(req,res)=>{
     if(user!=null)
     {res.json(user);}
     else
-    {res.send("Nema korisnika sa tim emailom");}
+    {res.send("Nema korisnika sa tim imenom");}
     
   })
   .catch((err)=>console.log(err));
@@ -64,9 +64,9 @@ router.get("/korisnikSaImenom",(req,res)=>{
 //preko POSTMAN-A
 router.post("/kreirajUsera", (req, res) => {
  const user = new User({
-   name: "Tinaa",
-   email:"tina@gmail.com",
-   password:"tinaa99",
+   name: "Milijana",
+   email:"mila@gmail.com",
+   password:"mila99",
    slikaKorisnika:"null"
  });
  const sacuvajuser = user.save();
@@ -74,7 +74,7 @@ router.post("/kreirajUsera", (req, res) => {
 });
 
 // Unesi podatke u toku igre, odnosno figure i boju igraca
-// http://localhost:3000/users/updateUser/6004cda827cb95527c6e66a8/white/6005bb52223eeb0b64c76d4f
+// http://localhost:3000/users/updateUser/600820e96d406743d0284129/white/6005bb52223eeb0b64c76d4f
 //preko POSTMAN-A
 router.post("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
   var figura = new Figura({_id: req.params.idfigure});

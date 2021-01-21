@@ -68,7 +68,7 @@ router.post("/unesiPodatkeIgre", (req,res)=>
 
 
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
-//http://localhost:3000/game/unesiPodatkeIgreIChet/6005e826651aa547c84b1466/6005b4561defb355b4137159
+//http://localhost:3000/game/unesiPodatkeIgreIChet/60081b799196bc3f54472bd5/6005b3fa1defb355b4137158
 //PREKO Postman-a
 //U toku igre, igra ce biti pokrenuta i znamo njen id, zatim kad se kreira poruka, pomocu ove post metode, 
 //sadrzaj te poruke treba da bude zapamcen u okviru poruka te igre
@@ -125,7 +125,7 @@ router.post("/unesiIgru/:beli/:crni/:rezultat/:brojfigura", (req,res)=>
 
 });
 //Vrati podatke partije
-//http://localhost:3000/game/vratiPartiju/6004be1158144f1bdc0fade5
+//http://localhost:3000/game/vratiPartiju/60081b799196bc3f54472bd5
 
 router.get("/vratiPartiju/:id",(req,res)=>
 {
@@ -140,24 +140,6 @@ router.get("/vratiPartiju/:id",(req,res)=>
       .catch((err) => console.log(err));
     
 });
-
-//Vrati Partiju 
-//http://localhost:3000/game/vratiPartiju/6005e826651aa547c84b1466
-
-router.get("/vratiPartiju/:id",(req,res)=>
-{
-    Game.findById(req.params.id)
-      .then((partija) => {
-        if (partija != null) {
-         res.json(partija);
-        } else {
-          res.send("Ne postoji partija sa tim id-em");
-        }
-      })
-      .catch((err) => console.log(err));
-    
-});
-
 
 
 module.exports = router;

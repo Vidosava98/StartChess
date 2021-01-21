@@ -4,17 +4,7 @@ const bcrypt = require("bcryptjs");
 const Figura = require("../models/Figura");
 const passport = require("passport");
 
-//izbrisi figuru
-//http://localhost:3000/figura/delete/600484411a009d33c023410d
-router.post("/delete/:id", (req, res) => {
-  Figura.findByIdAndDelete( {_id : req.params.id},function (err, result) {
-    if (err) {
-      res.send("Dogodio se izuzetak");
-    } else {
-     console.log("Izbrisana figura");
-    }
-  } );
-});
+
 
 // Unesi podatke jedne figure hardkodirano
 //http://localhost:3000/figura/unesipodatke
@@ -22,7 +12,7 @@ router.post("/unesipodatke", (req, res) => {
     const figura = new Figura({
       name: "Konj",
       color: "white", //white ili black, zbog razlicitosti padeza
-      slika: "slika", //mora da se radi multer i da prilikom kreiranja dobiju slike iz foldera slikeFigura
+      slika: "slika", // najver mora da se radi multer i da prilikom kreiranja dobiju slike iz foldera slikeFigura
       pozicijaNaTabli:"(1,B)"
     });
     const sacuvajfiguru = figura.save();
@@ -31,7 +21,7 @@ router.post("/unesipodatke", (req, res) => {
    });
 
  //Unesi poziciju figure
-//http://localhost:3000/figura/unesipozicijufigure/6004786a7eea1941708a96df/(A,8)
+//http://localhost:3000/figura/unesipozicijufigure/6004786a7eea1941708a96df/(G,7)
 //PRENOSI SE PREKO stranice, tj kao potez korisnika, u zavisnosti koju figuru odabere i 
 //koje polje izabere da postavi figuru
 router.post("/unesipozicijufigure/:id/:novaPozicija", (req, res) => {
@@ -49,16 +39,7 @@ router.post("/unesipozicijufigure/:id/:novaPozicija", (req, res) => {
     .catch((err) => console.log(err));
  });
 
-  //unos
-router.post("/unesi/:ime/:boja", (req, res) => {
-    const figura = new Figura({
-      name: req.params.ime,
-      color: req.params.boja
-    });
-    const sacuvajfiguru = figura.save();
-    res.json(sacuvajfiguru);
-   
-   });
+
 //vrati sve figure
 //http://localhost:3000/figura/vratisvefigure
 router.get("/vratisvefigure", (req, res) => {
@@ -96,4 +77,33 @@ router.get("/vratisvefigure", (req, res) => {
       })
       .catch((err) => console.log(err));
   });
+  //izbrisi figuru
+//http://localhost:3000/figura/delete/600486a157b3a835a46ce95c
+//http://localhost:3000/figura/delete/6005b7857203c93b70b24259
+router.post("/delete/:id", (req, res) => {
+  Figura.findByIdAndDelete( {_id : req.params.id},function (err, result) {
+    if (err) {
+      res.send("Dogodio se izuzetak");
+    } else {
+     console.log("Izbrisana figura");
+    }
+  } );
+});
+
+//vrati korisnika sa odredjenim id-em
+//http://localhost:3000/figura/figurapoid/600486a157b3a835a46ce95c
+
+router.get("/figurapoid/:id", (req, res) => {
+  Figura.findById(req.params.id)
+    .then((figura) => {
+      
+      if (figura != null) {
+       res.json(figura);
+      } else {
+        res.send("Nema figure sa tim id-em");
+      }
+    })
+    .catch((err) => console.log(err));
+});
+
    module.exports = router;
