@@ -3,7 +3,15 @@ const router = express.Router();
 const { ensureAuthenticated } = require("../config/auth");
 const User = require("../models/User");
 
+// const socket = io('http://localhost:4000')
+// socket.on('Chat',data=>
+// {
+//  console.log(data);
+// })
 
+// router.get("/", (req, res) => {
+//   res.render("welcome");
+// }); 
 router.get("/", (req, res) => {
   res.render("welcome");
 }); 
@@ -35,3 +43,24 @@ router.get("/users/korisnici", ensureAuthenticated, (req, res) => {
 });
 
 module.exports = router;
+
+
+/////  const socket = io('http://localhost:3000')
+// var socket = io();
+// socket.on('Chat',data=>
+// {
+//  //console.log(data);
+//  console.log("Novi korisnik");
+// })
+///iliiiiiiiiiii
+// io.on("connection", (socket) => {
+//     socket.on("zapocniIgru", (podaci) => {
+//     console.log(podaci);
+//     console.log("Novi igrac");
+//     });
+// });
+
+// const socket = require('socket.io');
+// socket.on('chat',function(){
+//     console.log("Poruka iz index1 iz socket.on");
+// });

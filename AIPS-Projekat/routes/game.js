@@ -17,8 +17,8 @@ router.post("/pokreniPartiju", (req,res)=>
     });
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
-
 });
+
 
 //Izbrisi partijuu
 //http://localhost:3000/game/delete/

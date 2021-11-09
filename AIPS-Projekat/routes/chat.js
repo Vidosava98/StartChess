@@ -1,6 +1,14 @@
+// const express= require("express");
+// const { $where } = require("../models/Chat");
+// const router = express.Router();
+// const Chat = require("../models/Chat");
 const express= require("express");
 const router = express.Router();
 const Chat = require("../models/Chat");
+
+
+// "socket.io": "^3.1.1"
+
 
 //Unesi poruku korisnika
 //http://localhost:3000/chat/unesiPoruku
@@ -45,5 +53,8 @@ router.get("/vratiPorukuKorisnika/:id",(req,res)=>{
     .catch((err)=>console.log(err));
     });
 
-
+// router.get("/", (req,res) =>{
+//     var socket = io.connect('http://localhost:3000');
+//     console.log("Usla sam u post kod chat");
+// })
 module.exports =router;
