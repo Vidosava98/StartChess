@@ -41,7 +41,10 @@ router.post("/pokreniIgru/:id1/:id2", (req,res)=>
     var user2 = new User({_id: req.params.id2});
     var partija= new Game({
         result:"Nema rezultata jos uvek",
-        kraj: false
+        kraj: false,
+        white:"16",
+        black:"16",
+        numbersOfFigure:"32"
     });
     partija.igraci.push(user1);
     partija.igraci.push(user2);

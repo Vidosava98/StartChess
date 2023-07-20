@@ -33,11 +33,14 @@
         <ul class="navbar-nav mr-auto">
          
           <li class="nav-item">
-            <a class="nav-link" href="/users/profile">Profil</a>
+            <a class="nav-link" href="/VratiProfil">Profil</a>
           </li>
         
           <li class="nav-item">
-            <a class="nav-link" href="/users/korisnici">Pregled korisnika</a>
+            <a class="nav-link" href="/VratiSveKorisnike">Pregled korisnika</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/zapocniPartiju">Započni partiju</a>
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -45,13 +48,5 @@
         </form>
       </div>
     </nav>
-    <div class="topdiv">
-      <%- include('./partials/_form_popout.ejs') %>
-      <div class="naslov">
-        <h1 class="naslov-tekst">
-          Započnite partiju!
-        </h1>
-      </div>
-    </div>
   </body>
 </html>

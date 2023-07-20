@@ -12,11 +12,8 @@ router.get("/vratisvekorisnike", (req, res) => {
     res.json(users);
   });
 });
-
-
-
 //vrati korisnika sa odredjenim id-em
-//http://localhost:3000/users/korisnikpoid/600820e96d406743d0284129
+//http://localhost:3000/users/korisnikpoid/618ad848fe0b5c47b01fb53b
 router.get("/korisnikpoid/:id", (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
@@ -46,7 +43,7 @@ router.get("/korisnikSaMailom", (req, res) => {
 //Vraca json podatke korisnika sa imenom(hardkodirano)
 //http://localhost:3000/users/korisnikSaImenom/
 router.get("/korisnikSaImenom",(req,res)=>{
-  User.findOne({name:"Maja"})
+  User.findOne({name:"vida98"})
   .then((user)=>
   {
     if(user!=null)
@@ -62,21 +59,21 @@ router.get("/korisnikSaImenom",(req,res)=>{
 // Kreiraj Usera(Hard kodirano)
 // http://localhost:3000/users/kreirajUsera
 //preko POSTMAN-A
-router.post("/kreirajUsera", (req, res) => {
+router.get("/kreirajUsera", (req, res) => {
  const user = new User({
-   name: "Milijana",
-   email:"mila@gmail.com",
-   password:"mila99",
-   slikaKorisnika:"null"
+   name: "Vidosava Arsic",
+   email:"vidosava123@gmail.com",
+   password:"vidosava123"
  });
  const sacuvajuser = user.save();
+ //Iako radim upis u bazu, neophodno je da bude router.get
  res.json(sacuvajuser);
 });
 
 // Unesi podatke u toku igre, odnosno figure i boju igraca
-// http://localhost:3000/users/updateUser/600820e96d406743d0284129/white/6005bb52223eeb0b64c76d4f
+// http://localhost:3000/users/updateUser/64b8370c6b879a2618e73782/white/6005bb52223eeb0b64c76d4f
 //preko POSTMAN-A
-router.post("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
+router.get("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
   var figura = new Figura({_id: req.params.idfigure});
   User.findById(req.params.iduser)
   .then((user) => {
@@ -84,21 +81,21 @@ router.post("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
       user.figure.push(figura);
       user.color=req.params.boja;
       const sacuvajuser = user.save();
+      console.log(figura);
       res.json(sacuvajuser);
     } else {
-      res.send("Ne user sa tim id-em");
+      res.send("Nema user-a sa tim id-em");
     }
   })
   .catch((err) => console.log(err));
-  
  });
 
 
 
 //kreiraj korisnika unosom parametra
-//http://localhost:3000/users/kreirajUsera/Jana/jana99@gmail.com/jana99
+//http://localhost:3000/users/kreirajUsera/Milos/milos1999@gmail.com/milos1999
 //preko POSTMANA
-router.post("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
+router.get("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
   const user = new User({
     name: req.params.ime,
     email: req.params.email,
@@ -107,13 +104,6 @@ router.post("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
   const sacuvajuser = user.save();
   res.json(sacuvajuser);
  });
-
-
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////Logovanjeeeeeeeee
-
-
 
 //Login page
 router.get("/login", (req, res) => {
@@ -126,9 +116,8 @@ router.get("/registracija", (req, res) => {
 router.get("/profilkorisnika", (req, res) => {
   res.render("profilkorisnika");
 });
-
 router.post("/profilkorisnika", (req, res) => {
-  User.findOne({ name: req.bodz.name })
+  User.findOne({ name: req.body.name })
     .then((user) => {
       console.log(user);
       if (user == null) {
@@ -142,10 +131,10 @@ router.post("/profilkorisnika", (req, res) => {
     .catch((err) => console.log(err));
 });
 //Register
-
  router.post("/registracija", (req, res) => {
- 
+  //console.log(req.body.name);
   const { name, email, password, password2 } = req.body;
+  let slikaKorisnika = null;
   let errors = [];
 
   if (!name || !email || !password || !password2) {
@@ -156,11 +145,11 @@ router.post("/profilkorisnika", (req, res) => {
     errors.push({ msg: "Sifre se ne poklapaju" });
   }
 
-  if (password.length < 6) {
+  if (password?.length < 6) {
     errors.push({ msg: "Sifra mora biti duza od 6 karaktera" });
   }
 
-  if (errors.length > 0) {
+  if (errors?.length > 0) {
     res.render("registracija", {
       errors,
       name,
@@ -179,7 +168,7 @@ router.post("/profilkorisnika", (req, res) => {
           email,
           password,
           password2,
-          // slikaKorisnika,
+          slikaKorisnika,
         });
       } else {
         const newUser = new User({
@@ -209,21 +198,18 @@ router.post("/profilkorisnika", (req, res) => {
   }
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/logovanje", (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/dashboard",
     failureRedirect: "/users/login",
     failureFlash: true,
   })(req, res, next);
 });
-
 router.get("/logout", (req, res) => {
   req.logout();
   req.flash("success_msg", "Uspesno ste se odjavili.");
   res.redirect("/users/login");
 });
-
-
 
 router.post("/changepassword", (req, res, next) => {
   const { passwordchange, passwordchange2, passwordchange3 } = req.body;
@@ -242,7 +228,7 @@ router.post("/changepassword", (req, res, next) => {
           res.redirect("/users/profile");
           return;
         }
-        if (passwordchange2.length < 6) {
+        if (passwordchange2?.length < 6) {
           req.flash("error_msg", "Nova sifra mora biti duza od 6 karaktera.");
           res.redirect("/users/profile");
           return;
@@ -320,8 +306,5 @@ router.post("/delete", (req, res) => {
     }
   });
 });
-
-
-
 
 module.exports = router;

@@ -45,18 +45,16 @@
       </div>
     </nav>
     <div class="glavniDivProfila">
-      <div class="card" style="width: 18rem;">
+      <div class="card" style="width:40%; background-color: lightgray;">
         <div class="card-body">
-          <h5 class="card-title"><%= name %></h5>
+          <h5 class="card-title"><%=name%></h5>
           <p class="card-text"><%=email%></p>
-          <a class="card-text"
-            >Datum prijave: <%= date.getDate() %>.<%= date.getMonth()
-            %>.<%=date.getFullYear()%>.</a
-          >
-          <a class="card-text"
-            >Poslednja odigrana partija: <%= lastConnection.getDate() %>.<%= lastConnection.getMonth()
-            %>.<%=lastConnection.getFullYear()%>.</a
-          >
+          <div class="card-text">
+            Datum prijave: <%= date.getDate() %>.<%= date.getMonth()%>.<%=date.getFullYear()%>.
+          </div>
+          <div class="card-text">
+            Poslednja odigrana partija: <%= lastConnection.getDate() %>.<%= lastConnection.getMonth()%>.<%=lastConnection.getFullYear()%>.
+          </div>
           <p></p>
           <a href="#" id="myRef1" class="card-link">Promeni šifru</a>
           <p></p>
