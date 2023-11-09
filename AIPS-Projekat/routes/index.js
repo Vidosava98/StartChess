@@ -2,21 +2,25 @@ const express = require("express");
 const router = express.Router();
 const { ensureAuthenticated } = require("../config/auth");
 const User = require("../models/User");
-const Igra = require("../models/Game");
-const Games = require("../models/Game");
+const Game = require("../models/Game");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
+//const { StrictEventEmitter } = require("socket.io/dist/typed-events");
 
+//http://localhost:3000/
 router.get("/", (req, res) => {
-  res.render("login");
+ res.render("login");
 }); 
+//http://localhost:3000/dashboard
 router.get("/dashboard", ensureAuthenticated, (req, res) => {
   res.render("dashboard", {
     name: req.user.name
   });
 });
-router.get("/zapocniPartiju", (req,res) =>{
-    Games.findOne({ kraj: false })
+//http://localhost:3000/ZapocniPartiju
+router.get("/ZapocniPartiju", (req,res) =>{
+    Game.findOne({ kraj: false })
     .then((game) => {
-      console.log(game);
       if(game.igraci.length == 1)
       {
       game.igraci.push(req.user._id);
@@ -41,7 +45,7 @@ router.get("/zapocniPartiju", (req,res) =>{
     })
     .catch((err) => {
       console.log("U catch sam");
-      var partija= new Games({
+      var partija= new Game({
           result:"Nema rezultata jos uvek",
           kraj: false,
           white:"16",
@@ -63,17 +67,27 @@ router.get("/zapocniPartiju", (req,res) =>{
     });
 
 });
+//http://localhost:3000/VratiProfil
 router.get("/VratiProfil", ensureAuthenticated, (req, res) => {
+console.log(req.body);
+User.findById(req.user._id).then((user) =>{
   res.render("profile", {
-    name: req.user.name,
-    email:req.user.email,
-    date: req.user.date,
-    slikaKorisnika: req.user.slikaKorisnika,
-    lastConnection: req.user.lastConnection
+    name: user.name,
+    email:user.email,
+    date: user.date,
+    slikaKorisnika: user.slikaKorisnika,
+    lastConnection: user.lastConnection
   });
+})
 });
-
-//http://localhost:3000/users/korisnici
+// res.render("profile", {
+//   name: req.user.name,
+//   email:req.user.email,
+//   date: req.user.date,
+//   slikaKorisnika: req.user.slikaKorisnika,
+//   lastConnection: req.user.lastConnection
+// });
+//http://localhost:3000/VratiSveKorisnike
 router.get("/VratiSveKorisnike", ensureAuthenticated, (req, res) => {
   User.find({ name: { $ne: "admin" } }).then((users) => {
     res.render("korisnici", {
@@ -83,26 +97,41 @@ router.get("/VratiSveKorisnike", ensureAuthenticated, (req, res) => {
     });
   });
 });
-
+//vrati samo odigrane partije
+//https://localhost:3000/OdigranePartije
+router.get("/OdigranePartije", async (req,res) =>{ 
+  let vratiListu = [];
+  let odigraneIgre = [];
+  
+  const games = await Game.find();
+    const start = async () => {
+      await asyncForEach(games, async (game) => {
+        if (req.user._id.equals(game.igraci[0])){
+          if (game.igraci[1] != null) {
+            console.log('if game.igraci[1] ' + game.igraci[1] + ' game.igraci[0] ' + game.igraci[0]);
+            const user = await User.findOne({_id : ObjectId(game.igraci[1])});
+            console.log(user);
+            if(user != null){
+            vratiListu.push(user);
+            odigraneIgre.push(game);}
+          }
+        }
+        else if (req.user._id.equals(game.igraci[1])){
+          console.log('if game.igraci[0] ' + game.igraci[0] + 'game.igraci[1] ' + game.igraci[1]);
+          const user =  await User.findOne({_id: ObjectId(game.igraci[0])});
+          console.log(user);
+          if(user != null){
+          vratiListu.push(user);
+          odigraneIgre.push(game);}
+        };
+      });
+      res.render("odigranepartije", {users: vratiListu, games: odigraneIgre});
+    }
+    start();
+}); 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
 module.exports = router;
-
-
-/////  const socket = io('http://localhost:3000')
-// var socket = io();
-// socket.on('Chat',data=>
-// {
-//  //console.log(data);
-//  console.log("Novi korisnik");
-// })
-///iliiiiiiiiiii
-// io.on("connection", (socket) => {
-//     socket.on("zapocniIgru", (podaci) => {
-//     console.log(podaci);
-//     console.log("Novi igrac");
-//     });
-// });
-
-// const socket = require('socket.io');
-// socket.on('chat',function(){
-//     console.log("Poruka iz index1 iz socket.on");
-// });

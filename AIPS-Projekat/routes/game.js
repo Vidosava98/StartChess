@@ -8,7 +8,7 @@ const Chat = require("../models/Chat");
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/pokreniPartiju
 //PREKO Postman-a
-router.post("/pokreniPartiju", (req,res)=>
+router.post("/pokreniPartiju", (req,res) =>
 {
     const partija= new Game({
         result:"nema",
@@ -18,8 +18,6 @@ router.post("/pokreniPartiju", (req,res)=>
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
 });
-
-
 //Izbrisi partijuu
 //http://localhost:3000/game/delete/
 router.post("/delete/:id", (req, res) => {
@@ -31,11 +29,10 @@ router.post("/delete/:id", (req, res) => {
     }
   } );
 });
-
 //POKRENI NOVU PARTIJU ,Sa Korisnicima, FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/pokreniIgru/600488249fd82214fc6b3f6f/6004cda827cb95527c6e66a8
 //PREKO Postman-a
-router.post("/pokreniIgru/:id1/:id2", (req,res)=>
+router.post("/pokreniIgru/:id1/:id2", (req,res) =>
 {
     var user1 = new User({_id: req.params.id1});
     var user2 = new User({_id: req.params.id2});
@@ -50,13 +47,11 @@ router.post("/pokreniIgru/:id1/:id2", (req,res)=>
     partija.igraci.push(user2);
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
-
 });
-
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/unesiPodatkeIgre
 //PREKO Postman-a
-router.post("/unesiPodatkeIgre", (req,res)=>
+router.post("/unesiPodatkeIgre", (req,res) =>
 {
     const partija= new Game({
         white:"16",
@@ -66,10 +61,7 @@ router.post("/unesiPodatkeIgre", (req,res)=>
     });
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
-
 });
-
-
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/unesiPodatkeIgreIChet/60081b799196bc3f54472bd5/6005b3fa1defb355b4137158
 //PREKO Postman-a
@@ -89,11 +81,8 @@ router.post("/unesiPodatkeIgreIChet/:idPartije/:idChet", (req,res)=>
         res.send("Ne postoji partija sa tim id-em");
       }
     })
-    .catch((err) => console.log(err));
-    
-
+    .catch((err) => console.log(err));    
 });
-
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/unesiPodatkeIgre/10/11/nema/21
 //PREKO Postman-a
@@ -107,9 +96,7 @@ router.post("/unesiPodatkeIgre/:beli/:crni/:rezultat/:brojfigura", (req,res)=>
     });
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
-
 });
-
 //POKRENI NOVU PARTIJU , FIKSNI PODACI, 16 BELIH, 16 CRNIH I 32 UKUPNO
 //http://localhost:3000/game/unesiIgru/7/10/pobednikdrugi/17
 //PREKO Postman-a
@@ -125,11 +112,9 @@ router.post("/unesiIgru/:beli/:crni/:rezultat/:brojfigura", (req,res)=>
     console.log("Uspesno ste uneli podatke partije");
     const sacuvanaPartija = partija.save();
     res.json(sacuvanaPartija);
-
 });
 //Vrati podatke partije
 //http://localhost:3000/game/vratiPartiju/60081b799196bc3f54472bd5
-
 router.get("/vratiPartiju/:id",(req,res)=>
 {
     Game.findById(req.params.id)
@@ -140,9 +125,6 @@ router.get("/vratiPartiju/:id",(req,res)=>
           res.send("Ne postoji partija sa tim id-em");
         }
       })
-      .catch((err) => console.log(err));
-    
+      .catch((err) => console.log(err));    
 });
-
-
 module.exports = router;

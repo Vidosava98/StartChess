@@ -16,8 +16,7 @@ router.get("/vratisvekorisnike", (req, res) => {
 //http://localhost:3000/users/korisnikpoid/618ad848fe0b5c47b01fb53b
 router.get("/korisnikpoid/:id", (req, res) => {
   User.findById(req.params.id)
-    .then((user) => {
-      
+    .then((user) => {      
       if (user != null) {
        res.json(user);
       } else {
@@ -30,8 +29,7 @@ router.get("/korisnikpoid/:id", (req, res) => {
 //http://localhost:3000/users/korisnikSaMailom/
 router.get("/korisnikSaMailom", (req, res) => {
   User.findOne({email:"arsic.vida@gmail.com"})
-    .then((user) => {
-      
+    .then((user) => {    
       if (user != null) {
        res.json(user);
       } else {
@@ -44,18 +42,14 @@ router.get("/korisnikSaMailom", (req, res) => {
 //http://localhost:3000/users/korisnikSaImenom/
 router.get("/korisnikSaImenom",(req,res)=>{
   User.findOne({name:"vida98"})
-  .then((user)=>
-  {
+  .then((user)=> {
     if(user!=null)
     {res.json(user);}
     else
-    {res.send("Nema korisnika sa tim imenom");}
-    
+    {res.send("Nema korisnika sa tim imenom");}   
   })
   .catch((err)=>console.log(err));
 });
-
-
 // Kreiraj Usera(Hard kodirano)
 // http://localhost:3000/users/kreirajUsera
 //preko POSTMAN-A
@@ -89,9 +83,6 @@ router.get("/updateUser/:iduser/:boja/:idfigure", (req, res) => {
   })
   .catch((err) => console.log(err));
  });
-
-
-
 //kreiraj korisnika unosom parametra
 //http://localhost:3000/users/kreirajUsera/Milos/milos1999@gmail.com/milos1999
 //preko POSTMANA
@@ -104,7 +95,6 @@ router.get("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
   const sacuvajuser = user.save();
   res.json(sacuvajuser);
  });
-
 //Login page
 router.get("/login", (req, res) => {
   res.render("login");
@@ -132,7 +122,6 @@ router.post("/profilkorisnika", (req, res) => {
 });
 //Register
  router.post("/registracija", (req, res) => {
-  //console.log(req.body.name);
   const { name, email, password, password2 } = req.body;
   let slikaKorisnika = null;
   let errors = [];
@@ -149,7 +138,7 @@ router.post("/profilkorisnika", (req, res) => {
     errors.push({ msg: "Sifra mora biti duza od 6 karaktera" });
   }
 
-  if (errors?.length > 0) {
+  if (errors?.length > 0){
     res.render("registracija", {
       errors,
       name,
@@ -157,9 +146,9 @@ router.post("/profilkorisnika", (req, res) => {
       password,
       password2,
       slikaKorisnika,
-    });
-  } else {
-    User.findOne({ email: email }).then((user) => {
+    }); } else {
+    User.findOne({ email: email })
+    .then((user) => {
       if (user) {
         errors.push({ msg: "Vec postoji korisnik sa tim emailom." });
         res.render("registracija", {
@@ -177,9 +166,10 @@ router.post("/profilkorisnika", (req, res) => {
           password,
         
         });
-        //U ovom delu se  nekako sifra pretvara u bycript
         bcrypt.genSalt(10, (err, salt) =>
           bcrypt.hash(newUser.password, salt, (err, hash) => {
+            console.log(newUser.password);
+            console.log(salt);
             if (err) {
               throw err;
             }
@@ -188,6 +178,7 @@ router.post("/profilkorisnika", (req, res) => {
               .save()
               .then((user) => {
                 req.flash("success_msg", "Uspesno ste se registrovali.");
+                console.log(user);
                 res.redirect("/users/login");
               })
               .catch((err) => console.log(err));
@@ -197,7 +188,6 @@ router.post("/profilkorisnika", (req, res) => {
     });
   }
 });
-
 router.post("/logovanje", (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/dashboard",
@@ -205,12 +195,18 @@ router.post("/logovanje", (req, res, next) => {
     failureFlash: true,
   })(req, res, next);
 });
-router.get("/logout", (req, res) => {
-  req.logout();
+router.get("/logout", (req, res, next) => {
+  req.logout(function(err){
+    if(err)
+    { 
+      return req.next(err);
+    }
+    else{     
+      res.redirect("/users/login");
+    }
+  });
   req.flash("success_msg", "Uspesno ste se odjavili.");
-  res.redirect("/users/login");
 });
-
 router.post("/changepassword", (req, res, next) => {
   const { passwordchange, passwordchange2, passwordchange3 } = req.body;
   var id;
@@ -263,7 +259,6 @@ router.post("/changepassword", (req, res, next) => {
     });
   });
 });
-
 router.post("/changeusername", (req, res, next) => {
   const { namechange } = req.body;
   console.log(namechange);
@@ -295,7 +290,6 @@ router.post("/changeusername", (req, res, next) => {
     }
   });
 });
-
 router.post("/delete", (req, res) => {
   console.log(req.body);
   User.findByIdAndDelete({ _id: req.body.id }, function (err, result) {
