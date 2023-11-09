@@ -50,15 +50,18 @@
     </nav>
     <div class="">  
     <div class="korisnici">
-      <title class="">Korisnici sa kojima postoje odigrane partije</title>  
-       <% users.forEach(function(users){ %>
+      <div class="h3">Odigrane partije</div>  
+       <% users.forEach(function(user,index){ %>
         <div class="list-group outset" style="margin-left: 4%; margin-right: 30%; margin-top: 2%; margin-bottom: 2%; background-color: #c5dbe8;">        
             <div class="d-flex w-100 justify-content-between"> 
-              <p class="mb-1">Korisničko ime: <%=users.name%>
-              </br>Email korisnika: <%=users.email%>
-              </br>Rezultat partije: <%=games.result%>
+              <p class="mb-1">
+                   Rezultat partije: <%=games[index].result%>
+              </br>Datum kada je igra odigrana: <%=games[index].datumKreiranjaIgre%>
+              </br>Id partije: <%=games[index]._id%>
+              </br>Korisničko ime: <%=user.name%>
+              </br>Email korisnika: <%=user.email%>
               </p>
-              <input class="nevidljivo" name="id" value="<%=users._id%>"></input>
+              <input class="nevidljivo" name="id" value="<%=user._id%>"></input>
             </div>
             </form>
         </div>   

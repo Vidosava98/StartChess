@@ -35,6 +35,12 @@ const GameSchema = mongoose.Schema({
     {
         type:Boolean,
         required:true
+    },
+    datumKreiranjaIgre:
+    {
+        type:Date,
+        required:true,
+        default:Date.now()
     }
     
 });
