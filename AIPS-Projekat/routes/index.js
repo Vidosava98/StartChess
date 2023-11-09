@@ -26,11 +26,17 @@ router.get("/ZapocniPartiju", async (req,res) =>{
       game.igraci.push(req.user._id);
       game.kraj = true;
       await game.save();
+      var hh = game.datumKreiranjaIgre.getHours();
+      var mm = game.datumKreiranjaIgre.getMinutes();
+       hh = hh < 10 ? '0' + hh : hh; 
+       mm = mm < 10 ? '0' + mm : mm;
+      let  curr_time = hh + ':' + mm;
       User.find({ $or: [{_id:game.igraci[0]},{ _id:game.igraci[1]}] }).then((igraci) => {
         console.log("U if sam");
         res.render("partija", {
           igraci: igraci,
-          game:  game
+          game:  game,
+          vreme: curr_time
         });
       });
       } else{
@@ -38,7 +44,8 @@ router.get("/ZapocniPartiju", async (req,res) =>{
           console.log("U else sam");
           res.render("partija", {
             igraci: igraci,
-            game:  game
+            game:  game,
+            vreme: curr_time
           });
         });
       }
@@ -56,13 +63,20 @@ router.get("/ZapocniPartiju", async (req,res) =>{
       partija.igraci.push(req.user._id);
       //Treba da se igracu izmene neki atributi, npr treba da se doda koje je boje,bela ili crna
       const sacuvanaPartija = await partija.save();
-      console.log(sacuvanaPartija);
+      //console.log(sacuvanaPartija);
       //Treba da se napravi jedna provera koja ce da ceka da jos neko doda svoj id u tu partiju
       User.find({ _id:partija.igraci[0]}).then((igraci) => {
-        console.log(igraci);
+        //console.log(igraci);
+        var hh = partija.datumKreiranjaIgre.getHours();
+        var mm = partija.datumKreiranjaIgre.getMinutes();
+         hh = hh < 10 ? '0' + hh : hh; 
+         mm = mm < 10 ? '0' + mm : mm;
+        let  curr_time = hh + ':' + mm;
+        console.log(curr_time);
         res.render("partija", {
           igraci: igraci,
-          game:  partija
+          game:  partija,
+          vreme: curr_time
         });
       });
     });
