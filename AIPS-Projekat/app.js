@@ -85,7 +85,9 @@ socket.on('doslaoba', async (options)=>{
   newGame.igraci.push(user1);
   newGame.igraci.push(user2);
    const saveGame = await newGame.save();
-  io.to(options.room).emit('prikaziPartiju', {r: saveGame.result, n: saveGame.numbersOfFigure, d: saveGame.datumKreiranjaIgre});
+  io.to(options.room).emit('prikaziPartiju', {r: saveGame.result, n: saveGame.numbersOfFigure, d: saveGame.datumKreiranjaIgre,
+  user1: saveGame.igraci[0], user2: saveGame.igraci[1]
+  });
 });
 socket.on('disconnect', () => {
   const user = removeUser(socket.id);

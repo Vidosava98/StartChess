@@ -65,45 +65,10 @@
                 <div style="margin: 2%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
                 <div style="margin: 2%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
             </div>  
-            <% igraci.forEach(function(igrac){ %> 
-            <div class="card" style="width:20%; background-color: lightgray; margin:5%">
-              <div class="card-body">
-                <h5>Opis igrača</h5>
-                <h5 class="card-title"><%= igrac.name%></h5>
-                <p class="card-text"><%= igrac.email%></p>
-                <div class="card-text">
-                  Datum prijave: <%= igrac.date.getDate() %>.<%= igrac.date.getMonth()%>.<%= igrac.date.getFullYear()%>.
-                </div>
-                <div class="card-text">
-                  Poslednja odigrana partija: <%= igrac.lastConnection.getDate() %>.<%= igrac.lastConnection.getMonth()%>.<%= igrac.lastConnection.getFullYear()%>.
-                </div>
-              </div>
-            </div>
-            <% });          
-               %>   
+          <div id="obaIgraca">
+         
+          </div>
         </div>
-        <script>
-          const myTimeout = setInterval(myGreeting, 1000);
-                let i = 0;
-                let s, m, h;
-                s = m = h = 0;
-                function myGreeting() {
-                  s = s + 1;
-                  if(s > 60){
-                    s = 0;
-                    m = m + 1;
-                    if(m > 60)
-                    {
-                    m = 0;
-                    h = h + 1
-                    }
-                  }
-                  hh = (h<10) ? "0" + h : h; 
-                  mm = (m<10) ? "0" + m : m; 
-                  ss = (s<10) ? "0" + s : s; 
-                  document.getElementById("idCountDown").innerHTML =  hh + ":" + mm + ":" + ss;
-                }
-          </script>
            <script src="/socket.io/socket.io.js"></script>
            <script src="./public/js/socket.js"></script>
     </body>

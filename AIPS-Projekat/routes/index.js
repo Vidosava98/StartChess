@@ -117,7 +117,7 @@ router.post("/VratiPodatkePartije", async (req,res) =>{
     // });
     //console.log(req.body['room']);
     res.render("partija", {
-      igraci: [req.user],
+      igrac: req.user,
       game:  new Game({ result:"Ceka se drugi takmicar",
       kraj: false}),
       vreme: 0,
