@@ -5,7 +5,6 @@ const User = require("../models/User");
 const Figura = require("../models/Figura");
 const passport = require("passport");
 const multer = require('multer');
-//vrati sve korisnike
 
 const upload = multer({
   limits: {
@@ -81,7 +80,6 @@ router.get("/kreirajUsera", (req, res) => {
  //Iako radim upis u bazu, neophodno je da bude router.get
  res.json(sacuvajuser);
 });
-
 // Unesi podatke u toku igre, odnosno figure i boju igraca
 // http://localhost:3000/users/updateUser/64b8370c6b879a2618e73782/white/6005bb52223eeb0b64c76d4f
 //preko POSTMAN-A

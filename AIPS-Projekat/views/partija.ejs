@@ -58,11 +58,12 @@
           </nav>
         <div>
             <div class="card" style="width:80%; background-color: rgb(222, 171, 171); margin: 5%; flex-direction: row;">
+                <div style="margin: 2%;"><label>Room </label><div id ="room"><%=room%></div></div>
+                <div style="margin: 2%;"><label>Moj email </label><div id ="email"><%=email%></div></div>
                 <div style="margin: 2%;"><%=game.result%></div>
                 <div style="margin: 2%;">Trenutan broj figura na tabli: <%=game.numbersOfFigure%></div>
                 <div style="margin: 2%;">Vreme kada je partija zapoceta: <%=vreme%></div>
                 <div style="margin: 2%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
-                <div id="idPopup"><%=popup%></div>
             </div>  
             <% igraci.forEach(function(igrac){ %> 
             <div class="card" style="width:20%; background-color: lightgray; margin:5%">
@@ -82,8 +83,6 @@
                %>   
         </div>
         <script>
-          setInterval(()=>{if(document.getElementById("idPopup").innerHTML)alert('Ceka se drugi takmicar')},
-          1000)
           const myTimeout = setInterval(myGreeting, 1000);
                 let i = 0;
                 let s, m, h;
@@ -105,6 +104,8 @@
                   document.getElementById("idCountDown").innerHTML =  hh + ":" + mm + ":" + ss;
                 }
           </script>
+           <script src="/socket.io/socket.io.js"></script>
+           <script src="./public/js/socket.js"></script>
     </body>
 </html>
 
