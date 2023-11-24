@@ -47,8 +47,10 @@
     <div class="glavniDivProfila">
       <div class="card" style="width:40%; background-color: lightgray;">
         <div class="card-body">
+          <%- include('./partials/messages.ejs') %>
           <h5 class="card-title"><%=name%></h5>
-          <p class="card-text"><%=email%></p>
+          <p class="card-text"><%=email%></p>          
+          <img style="width:40%;height:40%;" src ="data:image/jpeg;base64,<%=avatar%>">
           <div class="card-text">
             Datum prijave: <%= date.getDate() %>.<%= date.getMonth()%>.<%=date.getFullYear()%>.
           </div>
@@ -59,6 +61,9 @@
           <a href="#" id="myRef1" class="card-link">Promeni šifru</a>
           <p></p>
           <a href="#" id="myRef2" class="card-link">Promeni ime</a>
+          <p></p>
+          <a href="#" id="myRef3" class="card-link">Promeni profilnu sliku</a>
+          <p></p>
         </div>
       </div>
       <div id="row1" class="row1"></div>
@@ -73,6 +78,11 @@
       var $row1 = $("#row1");
       $("#myRef1").click(function () {
         $row1.load("/changes/_form_changepassword");
+      });
+
+      var $row1 = $("#row1");
+      $("#myRef3").click(function(){
+        $row1.load("/changes/_form_profileimage")
       });
     </script>
   </body>

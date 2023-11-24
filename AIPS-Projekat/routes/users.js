@@ -4,8 +4,22 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Figura = require("../models/Figura");
 const passport = require("passport");
-
+const multer = require('multer');
 //vrati sve korisnike
+
+const upload = multer({
+  limits: {
+      fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+      if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        console.log(file.originalname);
+          return cb(new Error('Please upload an image'))
+      }
+
+      cb(undefined, true)
+  }
+})
 //http://localhost:3000/users/vratisvekorisnike
 router.get("/vratisvekorisnike", (req, res) => {
   User.find().then((users) => {
@@ -15,15 +29,19 @@ router.get("/vratisvekorisnike", (req, res) => {
 //vrati korisnika sa odredjenim id-em
 //http://localhost:3000/users/korisnikpoid/618ad848fe0b5c47b01fb53b
 router.get("/korisnikpoid/:id", (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {      
-      if (user != null) {
-       res.json(user);
-      } else {
-        res.send("Nema korisnika sa tim id-em");
-      }
-    })
-    .catch((err) => console.log(err));
+  console.log('body.baseUrl: ' + req.baseUrl);
+  console.log('req.params ' + req.params.id);
+  console.log('req.body.value ' + req.body);
+  res.end();
+  // User.findById(req.params.id)
+  //   .then((user) => {      
+  //     if (user != null) {
+  //      res.json(user);
+  //     } else {
+  //       res.send("Nema korisnika sa tim id-em");
+  //     }
+  //   })
+  //   .catch((err) => console.log(err));
 });
 //vrati korisnika po emailu
 //http://localhost:3000/users/korisnikSaMailom/
@@ -95,6 +113,30 @@ router.get("/kreirajUsera/:ime/:email/:sifra", (req, res) => {
   const sacuvajuser = user.save();
   res.json(sacuvajuser);
  });
+ //Update za sliku, tj da se doda slika za usera naknadno
+ // http://localhost:3000/users/addImage/655a30036e6a78329cc2a3db
+ router.get("/addImage/:id", upload.single('avatar'), async (req,res) => {
+  try{
+  const id = req.params.id;
+  console.log(id);
+  console.log(req.file.buffer);
+  const user =  await User.findOneAndUpdate({_id : id},{avatar : req.file.buffer},function (err, docs) { 
+    if (err){ 
+        console.log(err) 
+    } 
+    else{ 
+        console.log("Updated User : ", docs); 
+    } 
+});
+  console.log(user);
+  res.send();
+  }
+  catch(err)
+  {
+    res.status(404).send("Ovde je greska" + err);
+  }
+ },(error,req,res,next) => {res.status(400).send(error.messasge);})
+
 //Login page
 router.get("/login", (req, res) => {
   res.render("login");
@@ -121,11 +163,12 @@ router.post("/profilkorisnika", (req, res) => {
     .catch((err) => console.log(err));
 });
 //Register
- router.post("/registracija", (req, res) => {
-  const { name, email, password, password2 } = req.body;
-  let slikaKorisnika = null;
-  let errors = [];
+ router.post("/registracija", upload.single('avatar'), async (req, res) => {
 
+  const { name, email, password, password2,avatar} = req.body;
+  const avatarBuff = req.file.buffer;
+  let errors = [];
+  //u req.file.buffer ide ono sto vrati middleware metoda, odnosno slika u binarnom obliku
   if (!name || !email || !password || !password2) {
      errors.push({ msg: "Popunite sve podatke." });
    }
@@ -137,7 +180,6 @@ router.post("/profilkorisnika", (req, res) => {
   if (password?.length < 6) {
     errors.push({ msg: "Sifra mora biti duza od 6 karaktera" });
   }
-
   if (errors?.length > 0){
     res.render("registracija", {
       errors,
@@ -145,31 +187,34 @@ router.post("/profilkorisnika", (req, res) => {
       email,
       password,
       password2,
-      slikaKorisnika,
-    }); } else {
+      avatar
+    });
+   } else {
     User.findOne({ email: email })
     .then((user) => {
       if (user) {
         errors.push({ msg: "Vec postoji korisnik sa tim emailom." });
+        console.log(name);
+        console.log(avatar);
         res.render("registracija", {
           errors,
-          name,
+          name: name,
           email,
           password,
           password2,
-          slikaKorisnika,
+          avatar,
         });
       } else {
         const newUser = new User({
           name,
           email,
           password,
-        
+          avatar:avatarBuff
         });
         bcrypt.genSalt(10, (err, salt) =>
           bcrypt.hash(newUser.password, salt, (err, hash) => {
-            console.log(newUser.password);
-            console.log(salt);
+            //console.log(newUser.password);
+            //console.log(salt);
             if (err) {
               throw err;
             }
@@ -215,18 +260,18 @@ router.post("/changepassword", (req, res, next) => {
     bcrypt.compare(passwordchange, user.password, (err, isMatch) => {
       if (err) {
         req.flash("error_msg", "Doslo je do greske prilikom promene lozinke.");
-        res.redirect("/users/profile");
+        res.redirect("/VratiProfil");
         return;
       }
       if (isMatch) {
         if (passwordchange2 !== passwordchange3) {
           req.flash("error_msg", "Unete sifre se ne poklapaju.");
-          res.redirect("/users/profile");
+          res.redirect("/VratiProfil");
           return;
         }
         if (passwordchange2?.length < 6) {
           req.flash("error_msg", "Nova sifra mora biti duza od 6 karaktera.");
-          res.redirect("/users/profile");
+          res.redirect("/VratiProfil");
           return;
         }
         id = user._id;
@@ -241,11 +286,11 @@ router.post("/changepassword", (req, res, next) => {
                   "error_msg",
                   "Došlo je do greške prilikom promene lozinke."
                 );
-                res.redirect("/users/profile");
+                res.redirect("/VratiProfil");
                 return;
               } else {
                 req.flash("success_msg", "Uspešna promena lozinke!!!");
-                res.redirect("/users/profile");
+                res.redirect("/VratiProfil");
                 return;
               }
             })
@@ -253,7 +298,7 @@ router.post("/changepassword", (req, res, next) => {
         );
       } else {
         req.flash("error_msg", "Trenutna šifra koju ste uneli nije tačna.");
-        res.redirect("/users/profile");
+        res.redirect("/VratiProfil");
         return;
       }
     });
@@ -261,11 +306,9 @@ router.post("/changepassword", (req, res, next) => {
 });
 router.post("/changeusername", (req, res, next) => {
   const { namechange } = req.body;
-  console.log(namechange);
   var id;
   let errors = [];
   User.findOne({ name: namechange }).then((user) => {
-    console.log(user);
     if (!user) {
       User.findOne({ name: req.body.name }).then((user) => {
         id = user._id;
@@ -274,22 +317,48 @@ router.post("/changeusername", (req, res, next) => {
           result
         ) {
           if (err) {
-            console.log("Greška");
-            res.redirect("/users/profile");
+            req.flash("error_msg", "Doslo je do greske prilikom promene imena.");
+            res.redirect("/VratiProfil");
             return;
           } else {
-            console.log("Uspešno");
-            res.redirect("/users/profile");
+            req.flash("success_msg", "Uspešna promena imena!!!");
+            res.redirect("/VratiProfil");
             return;
           }
         });
       });
     } else {
-      res.redirect("/users/profile");
+      req.flash("error_msg", "Doslo je do greske prilikom promene profilne slike.");
+      res.redirect("/VratiProfil");
       return;
     }
   });
 });
+router.post("/changeProfileImage", upload.single('avatar'), async (req,res) => {
+  try{
+  const email = req.body.email;
+  console.log(req.file.buffer);
+  const user =  await User.findOneAndUpdate({email : email},{avatar : req.file.buffer},function (err,result) {
+    if (err) {
+      req.flash("error_msg", "Doslo je do greske prilikom promene profilne slike.");
+      res.redirect("/VratiProfil");
+      return;
+    }else{
+      req.flash("success_msg", "Uspešna promena profilne slike!!!");
+      res.redirect("/VratiProfil");
+      return;
+    }
+  });
+  }
+  catch(err)
+  {
+    req.flash("error_msg", "Doslo je do greske prilikom promene profilne slike.");
+    res.redirect("/VratiProfil");
+  }
+ },(error,req,res,next) => {  
+ req.flash("error_msg", "Doslo je do greske prilikom promene profilne slike.");
+ res.redirect("/VratiProfil");
+ });
 router.post("/delete", (req, res) => {
   console.log(req.body);
   User.findByIdAndDelete({ _id: req.body.id }, function (err, result) {

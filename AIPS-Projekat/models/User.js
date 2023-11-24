@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
         reuired:false
 
     },
+    avatar: 
+    {
+        type:Buffer
+    },
     figure:[{ type: Schema.Types.ObjectId, ref: 'Figura' }]
     
 });

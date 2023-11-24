@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const http = require ('http');
 const mongoose = require("mongoose");
+const socketio = require("socket.io");
 //findPackageJSONFrom(path.dirname(require.resolve('pkg')));
 //const pkg = require.resolve('pkg');
 var app = express();
@@ -52,7 +53,8 @@ app.use("/changes", require("./config/changes"));
 
 
 var server = http.createServer(app);
-server.listen(3000);
-console.log('Aplikacija osluskuje na portu:' + 3000);
+const io = socketio(server);
+io.on('connection',() => {console.log("New webSocket connection")});
+server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});
 
 module.exports = app;

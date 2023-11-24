@@ -5,7 +5,7 @@
         <i class="fas fa-user-plus"></i> Registracija
       </h1>
       <%- include('./partials/messages.ejs') %>
-      <form action="/users/registracija" method="POST" enctype="form-data">
+      <form action="/users/registracija" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="name">Korsičnisko ime</label>
           <input
@@ -14,7 +14,7 @@
             name="name"
             class="form-control"
             placeholder="Unesite korisničko ime"
-            value="<%= typeof name != 'undefined' ? 'name' : '' %>"
+            value="<%= typeof name != 'undefined' ? name : '' %>"
           />
         </div>
         <div class="form-group">
@@ -48,6 +48,18 @@
             class="form-control"
             placeholder="Ponovo unesite lozinku"
             value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="avatar">Unesite sliku korisnika</label>
+          <input
+            type="file" 
+            accept="image/png, image/jpeg"
+            id="avatar"
+            name="avatar"
+            class="form-control",
+            value="<%= typeof avatar != 'undefined' ? avatar : '' %>"
+            required
           />
         </div>
         <button type="submit" class="btn btn-primary btn-block">
