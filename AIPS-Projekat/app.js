@@ -59,7 +59,6 @@ io.on('connection',(socket) => {
   console.log("New webSocket connection");
   socket.on('join', async (options, callback) => {
     const email = options.email;
-    //vratiti iz baze user ciji je token
     const userFromDatebase = await User.findOne({email:email});
     const username = userFromDatebase.name.toString();
     console.log(email);
@@ -77,6 +76,12 @@ io.on('connection',(socket) => {
 });
 socket.on('doslaoba', async (options)=>{
   io.to(options.room).emit('prikaziPartiju',`Kreirala sam partiju na backu. Iskoristila sam ${options.email1} i ${options.email2} i sad cu da prikazem ovaj game`);
+});
+socket.on('disconnect', () => {
+  const user = removeUser(socket.id);
+  if (user) {
+      socket.broadcast.to(user.room).emit('ack', `${user.username} has left the game!`);
+  }
 });
 });
 server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});
