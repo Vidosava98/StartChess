@@ -60,9 +60,9 @@
             <div class="card" style="width:80%; background-color: rgb(222, 171, 171); margin: 5%; flex-direction: row;">
                 <div style="margin: 2%;"><label>Room </label><div id ="room"><%=room%></div></div>
                 <div style="margin: 2%;"><label>Moj email </label><div id ="email"><%=email%></div></div>
-                <div style="margin: 2%;"><%=game.result%></div>
-                <div style="margin: 2%;">Trenutan broj figura na tabli: <%=game.numbersOfFigure%></div>
-                <div style="margin: 2%;">Vreme kada je partija zapoceta: <%=vreme%></div>
+                <div style="margin: 2%;"><label>Rezultat: </label><div id ="result"><%=game.result%></div></div>
+                <div style="margin: 2%;"><label>Trenutan broj figura na tabli: </label><div id ="numbersOfFigure"><%=game.numbersOfFigure%></div></div>
+                <div style="margin: 2%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
                 <div style="margin: 2%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
             </div>  
             <% igraci.forEach(function(igrac){ %> 

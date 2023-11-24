@@ -1,6 +1,12 @@
 const socket = io();
+
+
 const room = document.querySelector("#room").innerHTML;
 const email = document.querySelector("#email").innerHTML;
+let result = document.querySelector("#result").innerHTML;
+let numbersOfFigure = document.querySelector("#numbersOfFigure").innerHTML;
+let vreme = document.querySelector('#vreme').innerHTML;
+
 socket.on('ack', (message) => {
     console.log(message);
 });
@@ -14,6 +20,9 @@ socket.emit('join', { email: email, room : room.toString()}, (error) => {
         location.href = '/'
     }
 });
-socket.on('prikaziPartiju',(data) => {
-    console.log(data);
+socket.on('prikaziPartiju',(options) => {
+
+    document.querySelector("#result").innerHTML = options.r;
+    document.querySelector("#numbersOfFigure").innerHTML = options.n;
+    document.querySelector('#vreme').innerHTML = options.d;
 });

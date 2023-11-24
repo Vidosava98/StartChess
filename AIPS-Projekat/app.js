@@ -8,6 +8,7 @@ const http = require ('http');
 const mongoose = require("mongoose");
 const socketio = require("socket.io");
 const User = require('./models/User');
+const Game = require('./models/Game');
 //findPackageJSONFrom(path.dirname(require.resolve('pkg')));
 //const pkg = require.resolve('pkg');
 var app = express();
@@ -75,7 +76,16 @@ io.on('connection',(socket) => {
     callback();
 });
 socket.on('doslaoba', async (options)=>{
-  io.to(options.room).emit('prikaziPartiju',`Kreirala sam partiju na backu. Iskoristila sam ${options.email1} i ${options.email2} i sad cu da prikazem ovaj game`);
+  const user1 = await User.findOne({email: options.email1});
+  const user2 = await User.findOne({email: options.email2});
+
+  const newGame = new Game({ result:"",
+  numbersOfFigure:32,
+  kraj: false});
+  newGame.igraci.push(user1);
+  newGame.igraci.push(user2);
+   const saveGame = await newGame.save();
+  io.to(options.room).emit('prikaziPartiju', {r: saveGame.result, n: saveGame.numbersOfFigure, d: saveGame.datumKreiranjaIgre});
 });
 socket.on('disconnect', () => {
   const user = removeUser(socket.id);
