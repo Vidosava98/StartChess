@@ -103,13 +103,29 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
     //funkcija koja ce logikom dati koja polja su moguca za kliknuti
   }
 }else{
+  let x1 = null, x2 = null, y1 = null, y2 = null;
   console.log("Ovo je drugi click");
-  if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
-  { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
-  else
-  { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
-  
   const img = document.querySelector("#firstClick").innerHTML;
+  //uzmamo x i y za polje sa kog se pomeramo, treba nam da bi poslali drugom useru
+    x1 = document.querySelector("#firstClick").getAttribute("data-x");
+    y1 = document.querySelector("#firstClick").getAttribute("data-y");
+  
+  //uzimamo x i y za polje na koje se pomeramo
+  if(e.target.nodeName  === "DIV"){
+     x2 = tile.getAttribute("data-x");
+     y2 = tile.getAttribute("data-y");
+  }else{
+    x2 = tile.parentNode.getAttribute("data-x");
+    y2 = tile.parentNode.getAttribute("data-y");
+  }
+   socket.emit('pomeriFiguru',{x1,y1,x2,y2,img});
+    //vrcamo boju polja sa kog se pomeramo, sa zute, jer je to bio firstClick na plavo/belo
+    if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
+    { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
+    else
+    { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
+  //polje na kom se nalazila figura ostaje prazno u boji table.  Dok polje na koje se
+  //figura  vise nema staru figuru ili  vise nije prazno
   document.querySelector("#firstClick").innerHTML = "";
   if(e.target.nodeName  === "DIV"){
     tile.innerHTML = img;
@@ -126,6 +142,17 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
   // treba da se ocisti a to neko drugo da postane sa tom figurom
   //ali pre toga mora da se vrse provere i ako je dozvoljena promena na to polje
   //i posalje se drugom useru x i y za first click i za taj novi click
+});
+socket.on('proslediPomeriFiguru',(options) =>{
+  console.log('Prosledjena je figura');
+  const x1 = options.x1;
+  const y1 = options.y1;
+  const x2 = options.x2;
+  const y2 = options.y2;
+  const img = options.img;
+  console.log(x1,y1,x2,y2,img);
+  document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
+  document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
 });
 function myGreeting() {
     s = s + 1;
