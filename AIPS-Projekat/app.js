@@ -82,9 +82,17 @@ socket.on('doslaoba', async (options)=>{
   const newGame = new Game({ result:"",
   numbersOfFigure:32,
   kraj: false});
+
   newGame.igraci.push(user1);
   newGame.igraci.push(user2);
-   const saveGame = await newGame.save();
+  const saveGame = await newGame.save();
+
+    //update users lastConnection
+    const user1Updated = await User.findOneAndUpdate({email: options.email1}, {lastConnection : saveGame.datumKreiranjaIgre});
+    const user2Updated = await User.findOneAndUpdate({email: options.email2}, {lastConnection : saveGame.datumKreiranjaIgre});
+    console.log(user1Updated);
+    console.log(user2Updated);
+
   io.to(options.room).emit('prikaziPartiju', {r: saveGame.result, n: saveGame.numbersOfFigure, d: saveGame.datumKreiranjaIgre,
   user1: saveGame.igraci[0], user2: saveGame.igraci[1]
   });
