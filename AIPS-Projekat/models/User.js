@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     color:
     {
         type:String,
-        reuired:false
+        required:false
 
     },
     avatar: 

@@ -20,6 +20,7 @@ socket.on('ack', (message) => {
 });
 socket.on('info', (email2) => {
     console.log(email2);
+    document.querySelector("#myTurn").innerHTML = true;
     socket.emit('doslaoba',{room:room, email1 : email, email2 : email2}); 
 });
 socket.on('message', (options) => {
@@ -42,6 +43,7 @@ socket.on('prikaziPartiju',(options) => {
       <h5>Opis igrača</h5>
       <h5 class="card-title">${options.user1.name}</h5>
       <p class="card-text">${options.user1.email}</p>
+      <p class="card-text">${options.user1.color}</p>
        <div class="card-text">
          Datum prijave:  ${moment(options.user1.date).format('D.M.YYYY HH:mm')}
        </div> 
@@ -55,6 +57,7 @@ socket.on('prikaziPartiju',(options) => {
         <h5>Opis igrača</h5>
         <h5 class="card-title">${options.user2.name}</h5>
         <p class="card-text">${options.user2.email}</p>
+        <p class="card-text">${options.user2.color}</p>
         <div class="card-text">
         Datum prijave: ${moment(options.user2.date).format('D.M.YYYY HH:mm')}
         </div> 
@@ -63,6 +66,11 @@ socket.on('prikaziPartiju',(options) => {
         </div> 
     </div>
     </div>`);
+    if(document.querySelector('#myTurn').innerHTML === 'true'){
+    console.log('Ja igram prvi');
+    }else{
+      console.log('Ja ne igram prvi');
+    }
   setInterval(myGreeting, 1000);
 });
 $messageForm.addEventListener('submit', (e) => {
@@ -87,8 +95,11 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
   console.log(e.target);
   let x = 0;
   let y = 0;
-  if(document.querySelector("#firstClick") === null){
-  if(e.target.nodeName  === "DIV"){
+  if(document.querySelector('#myTurn').innerHTML === 'true'){
+ 
+   if(document.querySelector("#firstClick") === null){
+
+     if(e.target.nodeName  === "DIV"){
     //if it is div you can get Atribute data-x and data-y
      x = tile.getAttribute("data-x");
      y = tile.getAttribute("data-y");
@@ -102,7 +113,7 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
     console.log("else:" ,x, y);
     //funkcija koja ce logikom dati koja polja su moguca za kliknuti
   }
-}else{
+   }else{
   let x1 = null, x2 = null, y1 = null, y2 = null;
   console.log("Ovo je drugi click");
   const img = document.querySelector("#firstClick").innerHTML;
@@ -133,6 +144,8 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
     tile.parentNode.innerHTML = img;
   }
   document.querySelector("#firstClick").setAttribute("id","");
+  document.querySelector('#myTurn').innerHTML = false;
+}
 }
   //Proveriti koja polja su dostupna, tj na koja polja se moze pomeriti ta figura
   //postaviti to polje na first click
@@ -153,6 +166,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
   console.log(x1,y1,x2,y2,img);
   document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
+  document.querySelector('#myTurn').innerHTML = true;
 });
 function myGreeting() {
     s = s + 1;
