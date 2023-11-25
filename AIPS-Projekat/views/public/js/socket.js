@@ -23,7 +23,8 @@ socket.on('info', (email2) => {
     socket.emit('doslaoba',{room:room, email1 : email, email2 : email2}); 
 });
 socket.on('message', (options) => {
- $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;"><span>${options.username} </span> <p style="font-size:20px"> ${options.message}</p></div>`)
+  let vreme = moment(options.datumSlanjaPoruke).format('HH:mm:ss');
+  $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;"><span>${options.username}</span> <span>${vreme} </span> <p style="font-size:20px"> ${options.message}</p></div>`)
 });
 socket.emit('join', { email: email, room : room.toString()}, (error) => {
     if (error) {
@@ -35,17 +36,17 @@ socket.on('prikaziPartiju',(options) => {
 
     document.querySelector("#result").innerHTML = options.r;
     document.querySelector("#numbersOfFigure").innerHTML = options.n;
-    document.querySelector('#vreme').innerHTML = options.d;
+    document.querySelector('#vreme').innerHTML = moment(options.d).format('D.M.YYYY HH:mm');
     $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #bbc8f0; margin:5%">
     <div class="card-body">
       <h5>Opis igrača</h5>
       <h5 class="card-title">${options.user1.name}</h5>
       <p class="card-text">${options.user1.email}</p>
        <div class="card-text">
-         Datum prijave: ${options.user1.date}
+         Datum prijave:  ${moment(options.user1.date).format('D.M.YYYY HH:mm')}
        </div> 
        <div class="card-text">
-       Poslednja odigrana partija: ${options.user1.lastConnection}
+       Poslednja partija: ${moment(options.user1.lastConnection).format('D.M.YYYY HH:mm')}
        </div> 
     </div>
     </div>`);
@@ -55,10 +56,10 @@ socket.on('prikaziPartiju',(options) => {
         <h5 class="card-title">${options.user2.name}</h5>
         <p class="card-text">${options.user2.email}</p>
         <div class="card-text">
-        Datum prijave: ${options.user2.date}
+        Datum prijave: ${moment(options.user2.date).format('D.M.YYYY HH:mm')}
         </div> 
         <div class="card-text">
-        Poslednja odigrana partija: ${options.user2.lastConnection}
+        Poslednja partija: ${moment(options.user2.lastConnection).format('D.M.YYYY HH:mm')}
         </div> 
     </div>
     </div>`);
