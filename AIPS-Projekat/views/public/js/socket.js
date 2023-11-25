@@ -19,8 +19,8 @@ socket.on('ack', (message) => {
     console.log(message);
 });
 socket.on('info', (email2) => {
-    console.log(email2);
     document.querySelector("#myTurn").innerHTML = true;
+    document.querySelector("#myColor").innerHTML = 'W';
     socket.emit('doslaoba',{room:room, email1 : email, email2 : email2}); 
 });
 socket.on('message', (options) => {
@@ -92,30 +92,35 @@ $messageForm.addEventListener('submit', (e) => {
 
 document.querySelector("#chessboard").addEventListener("click", function (e) {
   var tile = e.target;
-  console.log(e.target);
   let x = 0;
   let y = 0;
   if(document.querySelector('#myTurn').innerHTML === 'true'){
  
    if(document.querySelector("#firstClick") === null){
 
-     if(e.target.nodeName  === "DIV"){
+     if(e.target.nodeName  === "DIV")
+  {
     //if it is div you can get Atribute data-x and data-y
      x = tile.getAttribute("data-x");
      y = tile.getAttribute("data-y");
-     console.log("if:", x, y);
-  }else{
-    //if it is img, you should get  parrent node first
-    x = tile.parentNode.getAttribute("data-x");
-    y = tile.parentNode.getAttribute("data-y");
-    tile.parentNode.style.backgroundColor = "#f5f3dade";
-    tile.parentNode.setAttribute("id", "firstClick");
-    console.log("else:" ,x, y);
-    //funkcija koja ce logikom dati koja polja su moguca za kliknuti
   }
-   }else{
+  else
+  {
+    console.log(tile.getAttribute("id").trim().toLowerCase());
+    console.log(document.querySelector("#myColor").innerHTML);
+    //if it is img, you should get  parrent node first
+    if(tile.getAttribute("id").trim().toLowerCase() === document.querySelector("#myColor").innerHTML.trim().toLocaleLowerCase())
+    {
+      x = tile.parentNode.getAttribute("data-x");
+      y = tile.parentNode.getAttribute("data-y");
+      tile.parentNode.style.backgroundColor = "#f5f3dade";
+      tile.parentNode.setAttribute("id", "firstClick");
+    }
+    //funkcija koja ce logikom dati koja polja su moguca za kliknuti
+  }  
+   }
+   else{
   let x1 = null, x2 = null, y1 = null, y2 = null;
-  console.log("Ovo je drugi click");
   const img = document.querySelector("#firstClick").innerHTML;
   //uzmamo x i y za polje sa kog se pomeramo, treba nam da bi poslali drugom useru
     x1 = document.querySelector("#firstClick").getAttribute("data-x");
@@ -157,13 +162,11 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
   //i posalje se drugom useru x i y za first click i za taj novi click
 });
 socket.on('proslediPomeriFiguru',(options) =>{
-  console.log('Prosledjena je figura');
   const x1 = options.x1;
   const y1 = options.y1;
   const x2 = options.x2;
   const y2 = options.y2;
   const img = options.img;
-  console.log(x1,y1,x2,y2,img);
   document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
   document.querySelector('#myTurn').innerHTML = true;

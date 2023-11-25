@@ -76,8 +76,8 @@ io.on('connection',(socket) => {
     callback();
 });
 socket.on('doslaoba', async (options)=>{
-  const user1 = await User.findOneAndUpdate({email: options.email1},{ color: '#FFFFFF'}, { new : true });
-  const user2 = await User.findOneAndUpdate({email: options.email2},{ color:'#000000'}, { new : true });
+  const user1 = await User.findOneAndUpdate({email: options.email1},{ color:'W'}, { new : true });
+  const user2 = await User.findOneAndUpdate({email: options.email2},{ color:'B'}, { new : true });
 
   const newGame = new Game({ result:"",
   numbersOfFigure:32,
