@@ -29,7 +29,7 @@ socket.on('prikaziPartiju',(options) => {
     document.querySelector("#result").innerHTML = options.r;
     document.querySelector("#numbersOfFigure").innerHTML = options.n;
     document.querySelector('#vreme').innerHTML = options.d;
-    $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:20%; background-color: lightgray; margin:5%">
+    $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #bbc8f0; margin:5%">
     <div class="card-body">
       <h5>Opis igrača</h5>
       <h5 class="card-title">${options.user1.name}</h5>
@@ -42,7 +42,7 @@ socket.on('prikaziPartiju',(options) => {
        </div> 
     </div>
     </div>`);
-    $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:20%; background-color: lightgray; margin:5%">
+    $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #c94646; margin:5%">
     <div class="card-body">
         <h5>Opis igrača</h5>
         <h5 class="card-title">${options.user2.name}</h5>

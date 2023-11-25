@@ -6,6 +6,8 @@
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
+
+
             <!-- Bootstrap CSS -->
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
             <link rel="stylesheet" href="../stilovi/style.css">
@@ -16,6 +18,7 @@
             integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
             crossorigin=""></script>
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+          
             <style type="text/css">
                 i
                 { 
@@ -57,17 +60,90 @@
             </div>
           </nav>
         <div>
-            <div class="card" style="width:80%; background-color: rgb(222, 171, 171); margin: 5%; flex-direction: row;">
-                <div style="margin: 2%;"><label>Room </label><div id ="room"><%=room%></div></div>
-                <div style="margin: 2%;"><label>Moj email </label><div id ="email"><%=email%></div></div>
-                <div style="margin: 2%;"><label>Rezultat: </label><div id ="result"><%=game.result%></div></div>
-                <div style="margin: 2%;"><label>Trenutan broj figura na tabli: </label><div id ="numbersOfFigure"><%=game.numbersOfFigure%></div></div>
-                <div style="margin: 2%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
-                <div style="margin: 2%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
+            <div class="card" style="background-color: #bbc8f0; margin-top: 3%; margin-left: 1.5%; margin-right: 37%; flex-direction: row;">
+                <div style="margin: 1%;"><label>Room </label><div id ="room"><%=room%></div></div>
+                <div style="margin: 1%;"><label>Moj email: </label><div id ="email"><%=email%></div></div>
+                <div style="margin: 1%;"><label>Rezultat: </label><div id ="result"><%=game.result%></div></div>
+                <div style="margin: 1%;"><label>Trenutan broj figura na tabli: </label><div id ="numbersOfFigure"><%=game.numbersOfFigure%></div></div>
+                <div style="margin: 1%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
+                <div style="margin: 1%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
             </div>  
-          <div id="obaIgraca">
-         
-          </div>
+            <div class="row">
+              <div id="obaIgraca">
+          
+              </div>
+              <div id="divChess">
+                <div class="chessboard">
+                  <div class=" W" data-x="0" data-y="0"><img src="images/B_rook.png"></div>
+                  <div class=" B" data-x="1" data-y="0"><img src="images/B_knight.png"></div>
+                  <div class=" W" data-x="2" data-y="0"><img src="images/B_bishop.png"></div>
+                  <div class=" B" data-x="3" data-y="0"><img src="images/B_queen.png"></div>
+                  <div class=" W" data-x="4" data-y="0"><img src="images/B_king.png"></div>
+                  <div class=" B" data-x="5" data-y="0"><img src="images/B_bishop.png"></div>
+                  <div class=" W" data-x="6" data-y="0"><img src="images/B_knight.png"></div>
+                  <div class=" B" data-x="7" data-y="0"><img src="images/B_rook.png"></div>
+                  <div class=" B" data-x="0" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" W" data-x="1" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" B" data-x="2" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" W" data-x="3" data-y="1"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="4" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" W" data-x="5" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" B" data-x="6" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" W" data-x="7" data-y="1"><img src="images/B_pawn.png"></div>
+                  <div class=" W" data-x="0" data-y="2"></div>
+                  <div class=" B" data-x="1" data-y="2"></div>
+                  <div class=" W" data-x="2" data-y="2"></div>
+                  <div class=" B" data-x="3" data-y="2"></div>
+                  <div class=" W" data-x="4" data-y="2"></div>
+                  <div class=" B" data-x="5" data-y="2"></div>
+                  <div class=" W" data-x="6" data-y="2"></div>
+                  <div class=" B" data-x="7" data-y="2"></div>
+                  <div class=" B" data-x="0" data-y="3"></div>
+                  <div class=" W" data-x="1" data-y="3"></div>
+                  <div class=" B" data-x="2" data-y="3"></div>
+                  <div class=" W" data-x="3" data-y="3"></div>
+                  <div class=" B" data-x="4" data-y="3"></div>
+                  <div class=" W" data-x="5" data-y="3"></div>
+                  <div class=" B" data-x="6" data-y="3"></div>
+                  <div class=" W" data-x="7" data-y="3"></div>
+                  <div class=" W" data-x="0" data-y="4"></div>
+                  <div class=" B" data-x="1" data-y="4"></div>
+                  <div class=" W" data-x="2" data-y="4"></div>
+                  <div class=" B" data-x="3" data-y="4"></div>
+                  <div class=" W" data-x="4" data-y="4"></div>
+                  <div class=" B" data-x="5" data-y="4"></div>
+                  <div class=" W" data-x="6" data-y="4"></div>
+                  <div class=" B" data-x="7" data-y="4"></div>
+                  <div class=" B" data-x="0" data-y="5"></div>
+                  <div class=" W" data-x="1" data-y="5"></div>
+                  <div class=" B" data-x="2" data-y="5"></div>
+                  <div class=" W" data-x="3" data-y="5"></div>
+                  <div class=" B" data-x="4" data-y="5"></div>
+                  <div class=" W" data-x="5" data-y="5"></div>
+                  <div class=" B" data-x="6" data-y="5"></div>
+                  <div class=" W" data-x="7" data-y="5"></div>
+                  <div class=" W" data-x="0" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="1" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" W" data-x="2" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="3" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" W" data-x="4" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="5" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" W" data-x="6" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="7" data-y="6"><img src="images/W_pawn.png"></div>
+                  <div class=" B" data-x="0" data-y="7"><img src="images/W_rook.png"></div>
+                  <div class=" W" data-x="1" data-y="7"><img src="images/W_knight.png"></div>
+                  <div class=" B" data-x="2" data-y="7"><img src="images/W_bishop.png"></div>
+                  <div class=" W" data-x="3" data-y="7"><img src="images/W_queen.png"></div>
+                  <div class=" B" data-x="4" data-y="7"><img src="images/W_king.png"></div>
+                  <div class=" W" data-x="5" data-y="7"><img src="images/W_bishop.png"></div>
+                  <div class=" B" data-x="6" data-y="7"><img src="images/W_knight.png"></div>
+                  <div class=" W" data-x="7" data-y="7"><img src="images/W_rook.png"></div>
+                </div>
+              </div>
+              <div style="width: 20%; background-color: #ffffffc7; margin: 2.5%;">
+
+              </div>
+            </div>
         </div>
            <script src="/socket.io/socket.io.js"></script>
            <script src="./public/js/socket.js"></script>
