@@ -23,7 +23,7 @@ socket.on('info', (email2) => {
     socket.emit('doslaoba',{room:room, email1 : email, email2 : email2}); 
 });
 socket.on('message', (options) => {
- $messages.insertAdjacentHTML('beforeend',`<div class="message"><p>${options.username} - ${options.message}</p></div>`)
+ $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;"><span>${options.username} </span> <p style="font-size:20px"> ${options.message}</p></div>`)
 });
 socket.emit('join', { email: email, room : room.toString()}, (error) => {
     if (error) {
