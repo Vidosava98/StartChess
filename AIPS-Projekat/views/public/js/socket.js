@@ -81,6 +81,52 @@ $messageForm.addEventListener('submit', (e) => {
       console.log('Message delivered!');
   });
 });
+
+document.querySelector("#chessboard").addEventListener("click", function (e) {
+  var tile = e.target;
+  console.log(e.target);
+  let x = 0;
+  let y = 0;
+  if(document.querySelector("#firstClick") === null){
+  if(e.target.nodeName  === "DIV"){
+    //if it is div you can get Atribute data-x and data-y
+     x = tile.getAttribute("data-x");
+     y = tile.getAttribute("data-y");
+     console.log("if:", x, y);
+  }else{
+    //if it is img, you should get  parrent node first
+    x = tile.parentNode.getAttribute("data-x");
+    y = tile.parentNode.getAttribute("data-y");
+    tile.parentNode.style.backgroundColor = "#f5f3dade";
+    tile.parentNode.setAttribute("id", "firstClick");
+    console.log("else:" ,x, y);
+    //funkcija koja ce logikom dati koja polja su moguca za kliknuti
+  }
+}else{
+  console.log("Ovo je drugi click");
+  if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
+  { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
+  else
+  { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
+  
+  const img = document.querySelector("#firstClick").innerHTML;
+  document.querySelector("#firstClick").innerHTML = "";
+  if(e.target.nodeName  === "DIV"){
+    tile.innerHTML = img;
+  }else{
+    tile.parentNode.innerHTML = img;
+  }
+  document.querySelector("#firstClick").setAttribute("id","");
+}
+  //Proveriti koja polja su dostupna, tj na koja polja se moze pomeriti ta figura
+  //postaviti to polje na first click
+  //svaki put kad se klikne na neko polje pita se da li na tabli postoji div sa klasom prvi klik
+  //ako ne postoji onda se radi ovo sve
+  //ako postoji prvi klik onda je to drugi klik sto znaci da je to tek pomeraj, pa ovo polje
+  // treba da se ocisti a to neko drugo da postane sa tom figurom
+  //ali pre toga mora da se vrse provere i ako je dozvoljena promena na to polje
+  //i posalje se drugom useru x i y za first click i za taj novi click
+});
 function myGreeting() {
     s = s + 1;
     if(s > 60){
