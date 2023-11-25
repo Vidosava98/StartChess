@@ -140,9 +140,15 @@
                   <div class=" W" data-x="7" data-y="7"><img src="images/W_rook.png"></div>
                 </div>
               </div>
-              <div style="width: 20%; background-color: #ffffffc7; margin: 2.5%;">
-
+              <form id="poruke-forma">
+              <div style="width: 100%;height: 85%; background-color: #ffffffc7; margin: 5%;" id="messages">           
               </div>
+              <div style="width:90%; margin-left:5%; margin-right:5%;">
+              <input name="message" placeholder="Message" required autocomplete="off" id="inputMessage">
+              <button type="submit" class="btn btn-primary" id="messageFormButton" style="margin-top: 2%;">Pošalji poruku      
+              </button>
+              </div>
+              </form>
             </div>
         </div>
            <script src="/socket.io/socket.io.js"></script>

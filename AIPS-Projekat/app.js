@@ -95,6 +95,13 @@ socket.on('disconnect', () => {
       socket.broadcast.to(user.room).emit('ack', `${user.username} has left the game!`);
   }
 });
+socket.on('sendMessage',(message, callback) => {
+  console.log('Stigla je poruka sledeceg sadrzaja: ' + message);
+  const user = getUser(socket.id);
+  const username = user.username;
+  io.to(user.room).emit('message',{message, username});
+  callback();
+});
 });
 server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});
 
