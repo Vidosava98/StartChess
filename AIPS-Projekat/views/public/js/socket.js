@@ -135,10 +135,13 @@ socket.on('proslediPomeriFiguru',(options) =>{
         dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure);
         break;
       case "rook":
-        dozvoljeniPoteziRook(xx, yy, elementiSlikeFigure);
+        dozvoljeniPoteziRook(xx, yy);
         break;
       case "queen":
         dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure);
+        break;
+      case "bishop":
+        dozvoljeniPoteziBishop(xx, yy);
         break;
       default:
         listaDozvoljenihPoteza = [];
@@ -337,7 +340,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     { el.style.backgroundColor = "#FFF"; }
     });
   }
-  function dozvoljeniPoteziRook(xx, yy, elementiSlikeFigure){
+  function dozvoljeniPoteziRook(xx, yy){
     let listZeleno = [];  
     let listCrveno = [];
     const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
@@ -434,98 +437,16 @@ socket.on('proslediPomeriFiguru',(options) =>{
     colorInRed(listCrveno);
   }
   function dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure){
+    dozvoljeniPoteziRook(xx, yy);
+    dozvoljeniPoteziBishop(xx, yy);
+  }
+  function dozvoljeniPoteziBishop(xx, yy){
     let listZeleno = [];  
     let listCrveno = [];
     const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
     const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
     let newX = null;
     let newY = null;
-
-    for(let i = 1; i < 8; i++){
-      //left
-      newX = xx - i;
-      newY = yy;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //right
-      newX = xx + i;
-      newY = yy;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //up
-      newX = xx;
-      newY = yy - i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //down
-      newX = xx;
-      newY = yy + i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});      
-            }
-            break;
-          }
-      }
-    }
-
 
     for(let i = 1; i < 8; i++){
       //left-up
