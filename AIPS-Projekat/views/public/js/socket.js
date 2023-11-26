@@ -3,6 +3,7 @@ const socket = io();
 let i = 0;
 let s, m, h;
 s = m = h = 0;
+let listaDozvoljenihPoteza = [];
 
 const room = document.querySelector("#room").innerHTML;
 const email = document.querySelector("#email").innerHTML;
@@ -92,86 +93,23 @@ $messageForm.addEventListener('submit', (e) => {
 
 document.querySelector("#chessboard").addEventListener("click", function (e) {
   var tile = e.target;
-  let x = 0;
-  let y = 0;
   if(document.querySelector('#myTurn').innerHTML === 'true'){
  
    if(document.querySelector("#firstClick") === null){
-
-     if(e.target.nodeName  === "DIV")
-  {
-    //if it is div you can get Atribute data-x and data-y
-     x = tile.getAttribute("data-x");
-     y = tile.getAttribute("data-y");
-  }
-  else
-  {
-    console.log(tile.getAttribute("id").trim().toLowerCase());
-    console.log(document.querySelector("#myColor").innerHTML);
-    //if it is img, you should get  parrent node first
-    if(tile.getAttribute("id").trim().toLowerCase() === document.querySelector("#myColor").innerHTML.trim().toLocaleLowerCase())
-    {
-      x = tile.parentNode.getAttribute("data-x");
-      y = tile.parentNode.getAttribute("data-y");
-      tile.parentNode.style.backgroundColor = "#f5f3dade";
-      tile.parentNode.setAttribute("id", "firstClick");
-    }
-    //funkcija koja ce logikom dati koja polja su moguca za kliknuti
-  }  
+   firstClick(tile);
    }
    else{
-  let x1 = null, x2 = null, y1 = null, y2 = null;
-  const img = document.querySelector("#firstClick").innerHTML;
-  //uzmamo x i y za polje sa kog se pomeramo, treba nam da bi poslali drugom useru
-    x1 = document.querySelector("#firstClick").getAttribute("data-x");
-    y1 = document.querySelector("#firstClick").getAttribute("data-y");
-  
-  //uzimamo x i y za polje na koje se pomeramo
-  if(e.target.nodeName  === "DIV"){
-     x2 = tile.getAttribute("data-x");
-     y2 = tile.getAttribute("data-y");
-  }else{
-    x2 = tile.parentNode.getAttribute("data-x");
-    y2 = tile.parentNode.getAttribute("data-y");
+   secondClick(tile);
+   }
   }
-   socket.emit('pomeriFiguru',{x1,y1,x2,y2,img});
-    //vrcamo boju polja sa kog se pomeramo, sa zute, jer je to bio firstClick na plavo/belo
-    if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
-    { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
-    else
-    { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
-  //polje na kom se nalazila figura ostaje prazno u boji table.  Dok polje na koje se
-  //figura  vise nema staru figuru ili  vise nije prazno
-  document.querySelector("#firstClick").innerHTML = "";
-  if(e.target.nodeName  === "DIV"){
-    tile.innerHTML = img;
-  }else{
-    tile.parentNode.innerHTML = img;
-  }
-  document.querySelector("#firstClick").setAttribute("id","");
-  document.querySelector('#myTurn').innerHTML = false;
-}
-}
-  //Proveriti koja polja su dostupna, tj na koja polja se moze pomeriti ta figura
-  //postaviti to polje na first click
-  //svaki put kad se klikne na neko polje pita se da li na tabli postoji div sa klasom prvi klik
-  //ako ne postoji onda se radi ovo sve
-  //ako postoji prvi klik onda je to drugi klik sto znaci da je to tek pomeraj, pa ovo polje
-  // treba da se ocisti a to neko drugo da postane sa tom figurom
-  //ali pre toga mora da se vrse provere i ako je dozvoljena promena na to polje
-  //i posalje se drugom useru x i y za first click i za taj novi click
 });
 socket.on('proslediPomeriFiguru',(options) =>{
-  const x1 = options.x1;
-  const y1 = options.y1;
-  const x2 = options.x2;
-  const y2 = options.y2;
-  const img = options.img;
   document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
+  //onog trenutka kad primis od drugog igraca njegov potez, tvoj je red. myTurn = true
   document.querySelector('#myTurn').innerHTML = true;
 });
-function myGreeting() {
+  function myGreeting() {
     s = s + 1;
     if(s > 60){
       s = 0;
@@ -187,5 +125,110 @@ function myGreeting() {
     ss = (s<10) ? "0" + s : s; 
     document.getElementById("idCountDown").innerHTML =  hh + ":" + mm + ":" + ss;
   }
+  function dozvoljeniPotezi(x, y){
+  const xx = parseInt(x);
+  const yy = parseInt(y);
+    const klasaSlike = document.querySelector('[data-x="'+ x +'"][data-y="' + y + '"]').children[0].getAttribute("class"); 
+    let elementiSlikeFigure = klasaSlike.split("_");
+    switch(elementiSlikeFigure[1].toString()) {
+      case "pawn":
+        dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure);
+        break;
+      default:
+        listaDozvoljenihPoteza = [];
+    }
+  }
+  function firstClick(tile){
+    let x = 0;
+    let y = 0;
+    if(tile.nodeName  !== "DIV")
+    {
+      if(tile.getAttribute("id").trim().toLowerCase() === document.querySelector("#myColor").innerHTML.trim().toLocaleLowerCase())
+      {
+        x = tile.parentNode.getAttribute("data-x");
+        y = tile.parentNode.getAttribute("data-y");
+        tile.parentNode.style.backgroundColor = "#f5f3dade";
+        tile.parentNode.setAttribute("id", "firstClick");
+        dozvoljeniPotezi(x, y);
+        colorInGreen();
+      }
+    }
+  }
+  function secondClick(tile){
+  let x1 = null, x2 = null, y1 = null, y2 = null;
+  const img = document.querySelector("#firstClick").innerHTML;
+  //uzmamo x i y za polje sa kog se pomeramo, treba nam da bi poslali drugom useru
+    x1 = document.querySelector("#firstClick").getAttribute("data-x");
+    y1 = document.querySelector("#firstClick").getAttribute("data-y");
+  
+  //uzimamo x i y za polje na koje se pomeramo
+  if(tile.nodeName  === "DIV"){
+     x2 = tile.getAttribute("data-x");
+     y2 = tile.getAttribute("data-y");
+  }else{
+    x2 = tile.parentNode.getAttribute("data-x");
+    y2 = tile.parentNode.getAttribute("data-y");
+  }
+  let listaFilter = [];
+  listaFilter = listaDozvoljenihPoteza.filter((element) => element.x.toString() === x2.toString() && element.y.toString() === y2.toString());
+  
+  if(listaFilter.length > 0){
+    pomeriFiguru(x1,y1,x2,y2,img,tile);
+    removeGreenField();
+  }
+  else{
+    returnFirstClickColor();
+    document.querySelector("#firstClick").setAttribute("id","");
+    removeGreenField();
+  }
+  }
+  function returnFirstClickColor(){
+    if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
+    { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
+    else
+    { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
+  }
+  function colorInGreen(){
+    listaDozvoljenihPoteza.forEach(function(currentElement, index) 
+    { 
+      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
+      element.setAttribute("id","colorGreen");
 
-
+    });
+  }
+  function removeGreenField(){
+    const listElementsInGreen = document.querySelectorAll('#colorGreen');
+    listElementsInGreen.forEach((el) => {
+    el.setAttribute("id",'');
+    if( el.getAttribute("class").trim().toLowerCase() === "b")
+    { el.style.backgroundColor = "#bbc8f0"; }
+    else
+    { el.style.backgroundColor = "#FFF"; }
+    });
+  }
+  function pomeriFiguru(x1, y1, x2, y2, img, tile){
+    socket.emit('pomeriFiguru',{x1,y1,x2,y2,img});
+    returnFirstClickColor();
+    document.querySelector("#firstClick").innerHTML = "";
+    document.querySelector("#firstClick").setAttribute("id","");
+    if(tile.nodeName  === "DIV"){
+    tile.innerHTML = img;}
+    else{
+    tile.parentNode.innerHTML = img;}
+    document.querySelector('#myTurn').innerHTML = false;
+  }
+  function dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure){
+    let list = [];
+    if(elementiSlikeFigure[0].toString() === "B" )
+    {   
+      let newX = xx;
+      let newY = yy + 1;
+      list.push({x:newX,y:newY});
+    }
+    else if(elementiSlikeFigure[0].toString() === "W"){
+      let newX = xx;
+      let newY = yy - 1;
+      list.push({x:newX,y:newY});
+    }
+    listaDozvoljenihPoteza = list;
+  }

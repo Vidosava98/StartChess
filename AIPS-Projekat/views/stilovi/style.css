@@ -252,7 +252,7 @@ img {
 .chessboard div.W{
 	background-color: #FFF;
 }
-.chessboard div.movable{
+.chessboard div#colorGreen{
 	background-color: green;
 	box-shadow: inset 0px 0px 0px 2px rgb(0,100,0);
 	-moz-box-shadow: inset 0px 0px 0px 2px rgb(0,100,0);
