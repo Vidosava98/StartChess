@@ -146,6 +146,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
       case "king":
         dozvoljeniPoteziKing(xx, yy, elementiSlikeFigure);
         break;
+      case "knight":
+        dozvoljeniPoteziKnight(xx, yy, elementiSlikeFigure);
+        break;
       default:
         listaDozvoljenihPoteza = [];
     }
@@ -618,4 +621,150 @@ socket.on('proslediPomeriFiguru',(options) =>{
     colorInGreen(listZeleno);
     colorInRed(listCrveno);
     dozvoljeniPoteziBishop(xx, yy, 2);
+  }
+  function dozvoljeniPoteziKnight(xx, yy, elementiSlikeFigure){
+    let listZeleno = [];
+    let listCrveno = [];
+    let newX = null;
+    let newY = null;
+    const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
+    const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
+    //down-left-left
+       newX = xx - 2;
+       newY = yy + 1;
+      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+      if(field){
+        if(!field.children[0]){
+          listZeleno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }else{
+            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+            {
+            listCrveno.push({x:newX,y:newY});
+            listaDozvoljenihPoteza.push({x:newX,y:newY});
+            }
+          }
+      }
+    //down-left
+       newX = xx - 1;
+       newY = yy + 2;
+      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+      if(field){
+        if(!field.children[0]){
+            listZeleno.push({x:newX,y:newY});
+            listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }else{
+            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+            {
+            listCrveno.push({x:newX,y:newY});
+            listaDozvoljenihPoteza.push({x:newX,y:newY});
+            }
+            }
+      }
+    //down-right-right
+      newX = xx + 2;
+      newY = yy + 1;
+      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+     if(field){
+       if(!field.children[0]){
+          listZeleno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }else{
+          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+          {
+          listCrveno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+        }
+     }
+    //down-right
+      newX = xx + 1;
+      newY = yy + 2;
+     field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+     if(field){
+       if(!field.children[0]){
+          listZeleno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }else{
+          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+          {
+          listCrveno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+        }
+     }
+  //up-left-left
+     newX = xx - 2;
+     newY = yy - 1;
+    field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+    if(field){
+      if(!field.children[0]){
+        listZeleno.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }else{
+          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+          {
+          listCrveno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+        }
+    }
+  //up-left
+     newX = xx - 1;
+     newY = yy - 2;
+    field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+    if(field){
+      if(!field.children[0]){
+          listZeleno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }else{
+          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+          {
+          listCrveno.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+          }
+    }
+  //up-right-right
+    newX = xx + 2;
+    newY = yy - 1;
+    field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+   if(field){
+     if(!field.children[0]){
+        listZeleno.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY});
+      }else{
+        const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+        if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+        {
+        listCrveno.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }
+      }
+   }
+  //up-right
+    newX = xx + 1;
+    newY = yy - 2;
+   field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+   if(field){
+     if(!field.children[0]){
+        listZeleno.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY});
+      }else{
+        const klasaFigure =  field.children[0].getAttribute("class").split("_");         
+        if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
+        {
+        listCrveno.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY});
+        }
+      }
+   }
+    colorInGreen(listZeleno);
+    colorInRed(listCrveno);
   }
