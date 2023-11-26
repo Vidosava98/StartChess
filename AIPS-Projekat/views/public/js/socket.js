@@ -141,7 +141,10 @@ socket.on('proslediPomeriFiguru',(options) =>{
         dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure);
         break;
       case "bishop":
-        dozvoljeniPoteziBishop(xx, yy);
+        dozvoljeniPoteziBishop(xx, yy, 8);
+        break;
+      case "king":
+        dozvoljeniPoteziKing(xx, yy, elementiSlikeFigure);
         break;
       default:
         listaDozvoljenihPoteza = [];
@@ -438,9 +441,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
   }
   function dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure){
     dozvoljeniPoteziRook(xx, yy);
-    dozvoljeniPoteziBishop(xx, yy);
+    dozvoljeniPoteziBishop(xx, yy, 8);
   }
-  function dozvoljeniPoteziBishop(xx, yy){
+  function dozvoljeniPoteziBishop(xx, yy, num){
     let listZeleno = [];  
     let listCrveno = [];
     const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
@@ -448,7 +451,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     let newX = null;
     let newY = null;
 
-    for(let i = 1; i < 8; i++){
+    for(let i = 1; i < num; i++){
       //left-up
       newX = xx - i;
       newY = yy - i;
@@ -469,7 +472,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
           }
       }
     }
-    for(let i = 1; i < 8; i++){
+    for(let i = 1; i < num; i++){
       //left-down
       newX = xx - i;
       newY = yy + i;
@@ -490,7 +493,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
           }
       }
     }
-    for(let i = 1; i < 8; i++){
+    for(let i = 1; i < num; i++){
       //right-up
       newX = xx + i;
       newY = yy - i;
@@ -511,7 +514,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
           }
       }
     }
-    for(let i = 1; i < 8; i++){
+    for(let i = 1; i < num; i++){
       //right-down
       newX = xx + i;
       newY = yy + i;
@@ -535,4 +538,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
 
     colorInGreen(listZeleno);
     colorInRed(listCrveno);
+  }
+  function dozvoljeniPoteziKing(xx, yy, elementiSlikeFigure){
+    dozvoljeniPoteziBishop(xx, yy, 2);
   }
