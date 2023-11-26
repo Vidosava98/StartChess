@@ -149,6 +149,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
         y = tile.parentNode.getAttribute("data-y");
         tile.parentNode.style.backgroundColor = "#f5f3dade";
         tile.parentNode.setAttribute("id", "firstClick");
+        listaDozvoljenihPoteza = [];
         dozvoljeniPotezi(x, y);
       }
     }
@@ -226,17 +227,26 @@ socket.on('proslediPomeriFiguru',(options) =>{
     {   
        newX = xx;
        newY = yy + 1;
-      list.push({x:newX,y:newY});
-      listaDozvoljenihPoteza.push({x:newX,y:newY});
+      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+      if(field){
+        if(!field.children[0]){
+          list.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+      }
     }
     else if(elementiSlikeFigure[0].toString() === "W"){
        newX = xx;
        newY = yy - 1;
-      list.push({x:newX,y:newY});
-      listaDozvoljenihPoteza.push({x:newX,y:newY});
+      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+      if(field){
+        if(!field.children[0]){
+          list.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+      }
     }
     colorInGreen(list);
-    //polja za obojiti u crveno ukoliko na njima stoji figura od protivnika
     list = [];
     if(elementiSlikeFigure[0].toString() === "B" )
     {         
@@ -245,41 +255,61 @@ socket.on('proslediPomeriFiguru',(options) =>{
       newY = yy + 1;
      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
      let klasaFigure = [];
-     if(field.children[0])
+     if(field){
+      if(field.children[0])
      {
      klasaFigure =  field.children[0].getAttribute("class").split("_");
      if(newX > -1 && newY < 8 && klasaFigure[0].toString() === "W" ){
      list.push({x:newX,y:newY});
      listaDozvoljenihPoteza.push({x:newX,y:newY}); }
      }
+     }
      //right
      newX = xx + 1;
      newY = yy + 1;
      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-     if(field.children[0])
+     if(field){
+      if(field.children[0])
      {
       klasaFigure =  field.children[0].getAttribute("class").split("_");
       if(newX < 8 && newY < 8 && klasaFigure[0].toString() === "W"){
         list.push({x:newX,y:newY});
         listaDozvoljenihPoteza.push({x:newX,y:newY}); }
      }
+     }
     }
     else if(elementiSlikeFigure[0].toString() === "W")
     {
 
-
       //left
        newX = xx - 1;
        newY = yy - 1;
-      if(newX > -1 && newY > 0 )
-      list.push({x:newX,y:newY});
-
+       let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+       let klasaFigure = [];
+      if(field){
+        if(field.children[0]){
+          klasaFigure =  field.children[0].getAttribute("class").split("_");
+          if(newX > -1 && newY > 0 && klasaFigure[0].toString() === "B" ){
+          list.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+          }
+      }
       //right
       newX = xx + 1;
       newY = yy - 1;
-      if(newX < 8 && newY > -1)
-      list.push({x:newX,y:newY});
+      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+      if(field){
+        if(field.children[0]){
+          klasaFigure =  field.children[0].getAttribute("class").split("_");
+          if(newX < 8 && newY > -1 && klasaFigure[0].toString() === "B"){
+          list.push({x:newX,y:newY});
+          listaDozvoljenihPoteza.push({x:newX,y:newY});
+          }
+          }
+      }
     }
+    console.log(listaDozvoljenihPoteza);
     colorInRed(list);
   }
   function colorInRed(list){
