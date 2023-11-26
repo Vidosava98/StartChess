@@ -150,7 +150,6 @@ socket.on('proslediPomeriFiguru',(options) =>{
         tile.parentNode.style.backgroundColor = "#f5f3dade";
         tile.parentNode.setAttribute("id", "firstClick");
         dozvoljeniPotezi(x, y);
-        colorInGreen();
       }
     }
   }
@@ -175,11 +174,13 @@ socket.on('proslediPomeriFiguru',(options) =>{
   if(listaFilter.length > 0){
     pomeriFiguru(x1,y1,x2,y2,img,tile);
     removeGreenField();
+    removeRedField();
   }
   else{
     returnFirstClickColor();
     document.querySelector("#firstClick").setAttribute("id","");
     removeGreenField();
+    removeRedField();
   }
   }
   function returnFirstClickColor(){
@@ -188,12 +189,12 @@ socket.on('proslediPomeriFiguru',(options) =>{
     else
     { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
   }
-  function colorInGreen(){
-    listaDozvoljenihPoteza.forEach(function(currentElement, index) 
+  function colorInGreen(list){
+    list.forEach(function(currentElement, index) 
     { 
       const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
       element.setAttribute("id","colorGreen");
-
+      element.style.backgroundColor = '';
     });
   }
   function removeGreenField(){
@@ -219,16 +220,84 @@ socket.on('proslediPomeriFiguru',(options) =>{
   }
   function dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure){
     let list = [];
+    let newX = null;
+    let newY = null;
     if(elementiSlikeFigure[0].toString() === "B" )
     {   
-      let newX = xx;
-      let newY = yy + 1;
+       newX = xx;
+       newY = yy + 1;
       list.push({x:newX,y:newY});
+      listaDozvoljenihPoteza.push({x:newX,y:newY});
     }
     else if(elementiSlikeFigure[0].toString() === "W"){
-      let newX = xx;
-      let newY = yy - 1;
+       newX = xx;
+       newY = yy - 1;
+      list.push({x:newX,y:newY});
+      listaDozvoljenihPoteza.push({x:newX,y:newY});
+    }
+    colorInGreen(list);
+    //polja za obojiti u crveno ukoliko na njima stoji figura od protivnika
+    list = [];
+    if(elementiSlikeFigure[0].toString() === "B" )
+    {         
+      //left
+      newX = xx - 1;
+      newY = yy + 1;
+     let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+     let klasaFigure = [];
+     if(field.children[0])
+     {
+     klasaFigure =  field.children[0].getAttribute("class").split("_");
+     if(newX > -1 && newY < 8 && klasaFigure[0].toString() === "W" ){
+     list.push({x:newX,y:newY});
+     listaDozvoljenihPoteza.push({x:newX,y:newY}); }
+     }
+     //right
+     newX = xx + 1;
+     newY = yy + 1;
+     field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+     if(field.children[0])
+     {
+      klasaFigure =  field.children[0].getAttribute("class").split("_");
+      if(newX < 8 && newY < 8 && klasaFigure[0].toString() === "W"){
+        list.push({x:newX,y:newY});
+        listaDozvoljenihPoteza.push({x:newX,y:newY}); }
+     }
+    }
+    else if(elementiSlikeFigure[0].toString() === "W")
+    {
+
+
+      //left
+       newX = xx - 1;
+       newY = yy - 1;
+      if(newX > -1 && newY > 0 )
+      list.push({x:newX,y:newY});
+
+      //right
+      newX = xx + 1;
+      newY = yy - 1;
+      if(newX < 8 && newY > -1)
       list.push({x:newX,y:newY});
     }
-    listaDozvoljenihPoteza = list;
+    colorInRed(list);
+  }
+  function colorInRed(list){
+    list.forEach(function(currentElement, index) 
+    { 
+      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
+      element.style.backgroundColor = '';
+      element.setAttribute("id","colorRed");
+
+    });
+  }
+  function removeRedField(){
+    const listElementsInRed = document.querySelectorAll('#colorRed');
+    listElementsInRed.forEach((el) => {
+    el.setAttribute("id",'');
+    if( el.getAttribute("class").trim().toLowerCase() === "b")
+    { el.style.backgroundColor = "#bbc8f0"; }
+    else
+    { el.style.backgroundColor = "#FFF"; }
+    });
   }

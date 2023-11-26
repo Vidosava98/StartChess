@@ -254,11 +254,8 @@ img {
 }
 .chessboard div#colorGreen{
 	background-color: green;
-	box-shadow: inset 0px 0px 0px 2px rgb(0,100,0);
-	-moz-box-shadow: inset 0px 0px 0px 2px rgb(0,100,0);
-	-webkit-box-shadow: inset 0px 0px 0px 2px rgb(0,100,0);
 }
-.chessboard div.attackable{
+.chessboard div#colorRed{
 	background-color: red;
 }
 .chessboard div.selected{
