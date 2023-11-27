@@ -66,6 +66,7 @@
                 <div style="margin: 1%;"><label>Rezultat: </label><div id ="result" style="color:#c41515"><%=game.result%></div></div>
                 <div style="margin: 1%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
                 <div style="margin: 1%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
+                <div style="margin: 1%;"><div>Vreme trajanja mog poteza:</div><div id="idTimerCounter">00:00:00</div></div>
             </div>  
             <div class="row" style = "padding-top: 20px;">
               <div id="obaIgraca">
@@ -149,8 +150,9 @@
               </div>
               </form>
             </div>
-            <div style="visibility:hidden;"><div>Moj red</div><div id="myTurn">false</div></div>
-            <div style="visibility:hidden;"><div>Moja boja</div><div id="myColor">B</div></div>
+            <div style="visibility:hidden;"><div></div><div id="myTurn">false</div></div>
+            <div style="visibility:hidden;"><div></div><div id="myColor">B</div></div>
+            <div style="visibility:hidden;"><div></div><div id="firstMove">true</div></div>
         </div>
            <script src="/socket.io/socket.io.js"></script>
            <script src="./public/js/socket.js"></script>

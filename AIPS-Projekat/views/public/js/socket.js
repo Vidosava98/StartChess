@@ -1,10 +1,10 @@
 const socket = io();
-
 let i = 0;
 let s, m, h;
 s = m = h = 0;
 let listaDozvoljenihPoteza = [];
-
+let intervalID = null;
+let intervalID2 =null
 const room = document.querySelector("#room").innerHTML;
 const email = document.querySelector("#email").innerHTML;
 const $obaIgraca = document.querySelector("#obaIgraca");
@@ -66,11 +66,13 @@ socket.on('prikaziPartiju',(options) => {
     </div>
     </div>`);
     if(document.querySelector('#myTurn').innerHTML === 'true'){
-    console.log('Ja igram prvi');
+    if(!intervalID)
+    intervalID = setInterval(timerCounter, 1000);
     }else{
-      console.log('Ja ne igram prvi');
+      console.log('Nije moj red');
     }
   setInterval(myGreeting, 1000);
+
 });
 $messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -97,17 +99,29 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
    }
    else{
    secondClick(tile);
+   if(document.querySelector('#firstMove').innerHTML === 'true' 
+    && document.querySelector('#myColor').innerHTML === 'W'
+    && document.querySelector('#myTurn').innerHTML === 'true' ){
+    document.querySelector('#firstMove').innerHTML = 'false';
+    clearInterval(intervalID2);
+    clearInterval(intervalID);
    }
   }
-});
+}});
 socket.on('proslediPomeriFiguru',(options) =>{
+  if(!options.rokada){
   document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
+  }else{
+    rokadaMove(options.x1 , options.y1, options.x2, options.y2);
+  }
   if(options.krajJe){
     document.querySelector("#result").innerHTML = "Protivnik je pobedio!";
     document.querySelector('#myTurn').innerHTML = false;
   }else{
     document.querySelector('#myTurn').innerHTML = true;
+    if(!intervalID)
+    intervalID = setInterval(timerCounter, 1000);
   }
 });
   function myGreeting() {
@@ -185,11 +199,12 @@ socket.on('proslediPomeriFiguru',(options) =>{
     x2 = tile.parentNode.getAttribute("data-x");
     y2 = tile.parentNode.getAttribute("data-y");
   }
+ if(!ifRokada(x1, y1, x2, y2)){
   let listaFilter = [];
   listaFilter = listaDozvoljenihPoteza.filter((element) => element.x.toString() === x2.toString() && element.y.toString() === y2.toString());
   
   if(listaFilter.length > 0){
-    pomeriFiguru(x1,y1,x2,y2,img,tile);
+    pomeriFiguru(x1,y1,x2,y2,img,tile,false);
     removeGreenField();
     removeRedField();
   }
@@ -199,36 +214,50 @@ socket.on('proslediPomeriFiguru',(options) =>{
     removeGreenField();
     removeRedField();
   }
-  }
+ }else{
+  pomeriFiguru(x1,y1,x2,y2,img,tile,true);
+  returnFirstClickColor();
+  document.querySelector("#firstClick").setAttribute("id","");
+  removeGreenField();
+  removeRedField();
+ }
+}
   function returnFirstClickColor(){
     if( document.querySelector("#firstClick").getAttribute("class").trim().toLowerCase() === "b")
     { document.querySelector("#firstClick").style.backgroundColor = "#bbc8f0"; }
     else
     { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
   }
-  function pomeriFiguru(x1, y1, x2, y2, img, tile){
+  function pomeriFiguru(x1, y1, x2, y2, img, tile, rokada){
 
     const secondClickField = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
     let krajJe = false; 
+   if(!rokada){
     if(secondClickField){
-    if(secondClickField.children[0]){
-      const secondClickKlasaFigure = secondClickField.children[0].getAttribute("class").split("_"); 
-      if(secondClickKlasaFigure[1].toString() === "king")
-      {   
-          document.querySelector("#result").innerHTML = "Pobedia je tvoja, čestitam!"
-          krajJe = true;
+      if(secondClickField.children[0]){
+        const secondClickKlasaFigure = secondClickField.children[0].getAttribute("class").split("_"); 
+        if(secondClickKlasaFigure[1].toString() === "king")
+        {   
+            document.querySelector("#result").innerHTML = "Pobedia je tvoja, čestitam!"
+            krajJe = true;
+        }
       }
-    }
-    }     
-    socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe});
-    returnFirstClickColor();
-    document.querySelector("#firstClick").innerHTML = "";
-    document.querySelector("#firstClick").setAttribute("id","");
-    if(tile.nodeName  === "DIV"){
-    tile.innerHTML = img;}
-    else{
-    tile.parentNode.innerHTML = img;}
+      } 
+      socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
+      returnFirstClickColor();
+      document.querySelector("#firstClick").innerHTML = "";
+      document.querySelector("#firstClick").setAttribute("id","");
+      if(tile.nodeName  === "DIV"){
+      tile.innerHTML = img;}
+      else{
+      tile.parentNode.innerHTML = img;}
+      document.querySelector('#myTurn').innerHTML = false;
+   } else{
+    socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
+    rokadaMove(x1, y1, x2, y2);
     document.querySelector('#myTurn').innerHTML = false;
+   }   
+  
   }
   function dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure){
     let list = [];
@@ -687,4 +716,91 @@ socket.on('proslediPomeriFiguru',(options) =>{
     else
     { el.style.backgroundColor = "#FFF"; }
     });
+  }
+  function timerCounter() {
+    const timer = document.getElementById("idTimerCounter").innerHTML;
+    const hhMMss = timer.split(":"); 
+    let sec, min, hour;
+    if(document.querySelector('#myTurn').innerHTML === 'true'){
+      hour = parseInt(hhMMss[0]);
+      min = parseInt(hhMMss[1]);
+      sec = parseInt(hhMMss[2]);
+      sec = sec + 1;
+      if(sec > 60){
+        sec = 0;
+        min = min + 1;
+        if(min > 60)
+        {
+        min = 0;
+        hour = hour + 1
+        }
+      }
+      const hh = (sec<10) ? "0" + hour : hour; 
+      const mm = (min<10) ? "0" + min : min; 
+      const ss = (sec<10) ? "0" + sec : sec; 
+      document.getElementById("idTimerCounter").innerHTML =  hh + ":" + mm + ":" + ss;
+    }else{
+      document.getElementById("idTimerCounter").innerHTML =  "00:00:00"
+    }
+   
+  }
+  function ifRokada(x1, y1, x2, y2){
+    let klasaFigure = null; 
+    let mojaKlasaFigure = null;
+
+    const Field = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
+    if(Field)
+    if(Field.children[0])
+    klasaFigure = Field.children[0].getAttribute("class").split("_");
+
+    const mojField = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
+    if(mojField)
+    if(mojField.children[0])
+    mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
+    console.log(mojaKlasaFigure, klasaFigure);
+    if(mojaKlasaFigure && klasaFigure){
+      console.log(klasaFigure[1]);
+      console.log(mojaKlasaFigure[1]);
+      //first for W
+         if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '7') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '7') ){
+          const isEmpyFildForBishop = document.querySelector('[data-x="'+ 5 +'"][data-y="' + 7 + '"]').innerHTML; 
+          const isEmpyFildForKnight = document.querySelector('[data-x="'+ 6 +'"][data-y="' + 7 + '"]').innerHTML; 
+          if(!isEmpyFildForBishop && !isEmpyFildForKnight)
+          {return true;}
+          else { return false;}
+          }else{
+      //then for B
+            if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '0') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '0') ){
+              const isEmpyFildForBishop = document.querySelector('[data-x="'+ 5 +'"][data-y="' + 0 + '"]').innerHTML; 
+              const isEmpyFildForKnight = document.querySelector('[data-x="'+ 6 +'"][data-y="' + 0 + '"]').innerHTML; 
+              if(!isEmpyFildForBishop && !isEmpyFildForKnight)
+              {return true;}
+              else{return false;}
+              }else{
+              return false;
+              }
+          }
+    }else{
+      return false;
+    }
+  }
+  function rokadaMove(x1, y1, x2, y2){
+    const pomFirstImg = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
+    const pomSecondImg = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
+     const klasa = pomFirstImg.children[0].getAttribute("class").split("_");
+    if(klasa[1] === "king"){
+    let newX = parseInt(x1) + 1;
+    document.querySelector('[data-x="'+ newX +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; //u pomSecondImg je top
+    newX = parseInt(x2) - 1;
+    document.querySelector('[data-x="'+ newX +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; //tu je kralj
+    document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
+    document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+    }else{
+      let newX = parseInt(x2) + 2;
+      document.querySelector('[data-x="'+ newX +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;//tu je kralj
+      newX = parseInt(x1) - 2;
+      document.querySelector('[data-x="'+ newX +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;//tu je top
+      document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
+      document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+    }
   }
