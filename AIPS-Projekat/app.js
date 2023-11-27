@@ -117,7 +117,7 @@ socket.on('sendMessage',(message, callback) => {
 socket.on('pomeriFiguru',(options) => {
   const user = getUser(socket.id);
   if(user){
-  socket.broadcast.to(user.room).emit('proslediPomeriFiguru',{x1: options.x1, y1: options.y1, x2:options.x2, y2: options.y2, img: options.img});
+  socket.broadcast.to(user.room).emit('proslediPomeriFiguru',{x1: options.x1, y1: options.y1, x2:options.x2, y2: options.y2, img: options.img, krajJe: options.krajJe});
   }
 })
 });

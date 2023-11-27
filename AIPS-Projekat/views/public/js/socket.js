@@ -13,7 +13,6 @@ const $messageFormButton = document.querySelector("#messageFormButton");
 const $messages = document.querySelector("#messages");
 const $messageFormInput = document.querySelector("#inputMessage")
 let result = document.querySelector("#result").innerHTML;
-let numbersOfFigure = document.querySelector("#numbersOfFigure").innerHTML;
 let vreme = document.querySelector('#vreme').innerHTML;
 
 socket.on('ack', (message) => {
@@ -37,7 +36,6 @@ socket.emit('join', { email: email, room : room.toString()}, (error) => {
 socket.on('prikaziPartiju',(options) => {
 
     document.querySelector("#result").innerHTML = options.r;
-    document.querySelector("#numbersOfFigure").innerHTML = options.n;
     document.querySelector('#vreme').innerHTML = moment(options.d).format('D.M.YYYY HH:mm');
     $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #bbc8f0; margin:5%">
     <div class="card-body">
@@ -90,7 +88,6 @@ $messageForm.addEventListener('submit', (e) => {
       console.log('Message delivered!');
   });
 });
-
 document.querySelector("#chessboard").addEventListener("click", function (e) {
   var tile = e.target;
   if(document.querySelector('#myTurn').innerHTML === 'true'){
@@ -106,8 +103,12 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
 socket.on('proslediPomeriFiguru',(options) =>{
   document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
-  //onog trenutka kad primis od drugog igraca njegov potez, tvoj je red. myTurn = true
-  document.querySelector('#myTurn').innerHTML = true;
+  if(options.krajJe){
+    document.querySelector("#result").innerHTML = "Protivnik je pobedio!";
+    document.querySelector('#myTurn').innerHTML = false;
+  }else{
+    document.querySelector('#myTurn').innerHTML = true;
+  }
 });
   function myGreeting() {
     s = s + 1;
@@ -138,16 +139,16 @@ socket.on('proslediPomeriFiguru',(options) =>{
         dozvoljeniPoteziRook(xx, yy);
         break;
       case "queen":
-        dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure);
+        dozvoljeniPoteziQueen(xx, yy);
         break;
       case "bishop":
         dozvoljeniPoteziBishop(xx, yy, 8);
         break;
       case "king":
-        dozvoljeniPoteziKing(xx, yy, elementiSlikeFigure);
+        dozvoljeniPoteziKing(xx, yy);
         break;
       case "knight":
-        dozvoljeniPoteziKnight(xx, yy, elementiSlikeFigure);
+        dozvoljeniPoteziKnight(xx, yy);
         break;
       default:
         listaDozvoljenihPoteza = [];
@@ -205,26 +206,21 @@ socket.on('proslediPomeriFiguru',(options) =>{
     else
     { document.querySelector("#firstClick").style.backgroundColor = "#FFF"; }
   }
-  function colorInGreen(list){
-    list.forEach(function(currentElement, index) 
-    { 
-      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
-      element.setAttribute("id","colorGreen");
-      element.style.backgroundColor = '';
-    });
-  }
-  function removeGreenField(){
-    const listElementsInGreen = document.querySelectorAll('#colorGreen');
-    listElementsInGreen.forEach((el) => {
-    el.setAttribute("id",'');
-    if( el.getAttribute("class").trim().toLowerCase() === "b")
-    { el.style.backgroundColor = "#bbc8f0"; }
-    else
-    { el.style.backgroundColor = "#FFF"; }
-    });
-  }
   function pomeriFiguru(x1, y1, x2, y2, img, tile){
-    socket.emit('pomeriFiguru',{x1,y1,x2,y2,img});
+
+    const secondClickField = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
+    let krajJe = false; 
+    if(secondClickField){
+    if(secondClickField.children[0]){
+      const secondClickKlasaFigure = secondClickField.children[0].getAttribute("class").split("_"); 
+      if(secondClickKlasaFigure[1].toString() === "king")
+      {   
+          document.querySelector("#result").innerHTML = "Pobedia je tvoja, čestitam!"
+          krajJe = true;
+      }
+    }
+    }     
+    socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe});
     returnFirstClickColor();
     document.querySelector("#firstClick").innerHTML = "";
     document.querySelector("#firstClick").setAttribute("id","");
@@ -327,25 +323,6 @@ socket.on('proslediPomeriFiguru',(options) =>{
     console.log(listaDozvoljenihPoteza);
     colorInRed(list);
   }
-  function colorInRed(list){
-    list.forEach(function(currentElement, index) 
-    { 
-      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
-      element.style.backgroundColor = '';
-      element.setAttribute("id","colorRed");
-
-    });
-  }
-  function removeRedField(){
-    const listElementsInRed = document.querySelectorAll('#colorRed');
-    listElementsInRed.forEach((el) => {
-    el.setAttribute("id",'');
-    if( el.getAttribute("class").trim().toLowerCase() === "b")
-    { el.style.backgroundColor = "#bbc8f0"; }
-    else
-    { el.style.backgroundColor = "#FFF"; }
-    });
-  }
   function dozvoljeniPoteziRook(xx, yy){
     let listZeleno = [];  
     let listCrveno = [];
@@ -442,7 +419,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     colorInGreen(listZeleno);
     colorInRed(listCrveno);
   }
-  function dozvoljeniPoteziQueen(xx, yy, elementiSlikeFigure){
+  function dozvoljeniPoteziQueen(xx, yy){
     dozvoljeniPoteziRook(xx, yy);
     dozvoljeniPoteziBishop(xx, yy, 8);
   }
@@ -542,7 +519,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     colorInGreen(listZeleno);
     colorInRed(listCrveno);
   }
-  function dozvoljeniPoteziKing(xx, yy, elementiSlikeFigure){
+  function dozvoljeniPoteziKing(xx, yy){
 
     let listZeleno = [];
     let listCrveno = [];
@@ -622,7 +599,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     colorInRed(listCrveno);
     dozvoljeniPoteziBishop(xx, yy, 2);
   }
-  function dozvoljeniPoteziKnight(xx, yy, elementiSlikeFigure){
+  function dozvoljeniPoteziKnight(xx, yy){
     let listZeleno = [];
     let listCrveno = [];
     let newX = null;
@@ -673,4 +650,41 @@ socket.on('proslediPomeriFiguru',(options) =>{
       
     colorInGreen(listZeleno);
     colorInRed(listCrveno);
+  }
+  function colorInRed(list){
+    list.forEach(function(currentElement, index) 
+    { 
+      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
+      element.style.backgroundColor = '';
+      element.setAttribute("id","colorRed");
+
+    });
+  }
+  function colorInGreen(list){
+    list.forEach(function(currentElement, index) 
+    { 
+      const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
+      element.setAttribute("id","colorGreen");
+      element.style.backgroundColor = '';
+    });
+  }
+  function removeGreenField(){
+    const listElementsInGreen = document.querySelectorAll('#colorGreen');
+    listElementsInGreen.forEach((el) => {
+    el.setAttribute("id",'');
+    if( el.getAttribute("class").trim().toLowerCase() === "b")
+    { el.style.backgroundColor = "#bbc8f0"; }
+    else
+    { el.style.backgroundColor = "#FFF"; }
+    });
+  }
+  function removeRedField(){
+    const listElementsInRed = document.querySelectorAll('#colorRed');
+    listElementsInRed.forEach((el) => {
+    el.setAttribute("id",'');
+    if( el.getAttribute("class").trim().toLowerCase() === "b")
+    { el.style.backgroundColor = "#bbc8f0"; }
+    else
+    { el.style.backgroundColor = "#FFF"; }
+    });
   }
