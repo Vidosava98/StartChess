@@ -263,6 +263,8 @@ socket.on('proslediPomeriFiguru',(options) =>{
     let list = [];
     let newX = null;
     let newY = null;
+    let listFirstMoveB = [{x:0,y:1},{x:1,y:1},{x:2,y:1},{x:3,y:1},{x:4,y:1},{x:5,y:1},{x:6,y:1},{x:7,y:1}];
+    let listFirstMoveW = [{x:0,y:6},{x:1,y:6},{x:2,y:6},{x:3,y:6},{x:4,y:6},{x:5,y:6},{x:6,y:6},{x:7,y:6}];
     if(elementiSlikeFigure[0].toString() === "B" )
     {   
        newX = xx;
@@ -274,6 +276,19 @@ socket.on('proslediPomeriFiguru',(options) =>{
           listaDozvoljenihPoteza.push({x:newX,y:newY});
           }
       }
+      listFirstMoveB.forEach((element) => {
+        if(element.x === xx && element.y === yy){
+          newX = xx;
+          newY = yy + 2;
+          field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+          if(field){
+            if(!field.children[0]){
+              list.push({x:newX,y:newY});
+              listaDozvoljenihPoteza.push({x:newX,y:newY});
+              }
+          }
+        }
+      })
     }
     else if(elementiSlikeFigure[0].toString() === "W"){
        newX = xx;
@@ -285,6 +300,19 @@ socket.on('proslediPomeriFiguru',(options) =>{
           listaDozvoljenihPoteza.push({x:newX,y:newY});
           }
       }
+      listFirstMoveW.forEach((element) => {
+        if(element.x === xx && element.y === yy){
+          newX = xx;
+          newY = yy - 2;
+          field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
+          if(field){
+            if(!field.children[0]){
+              list.push({x:newX,y:newY});
+              listaDozvoljenihPoteza.push({x:newX,y:newY});
+              }
+          }
+        }
+      })
     }
     colorInGreen(list);
     list = [];
