@@ -757,50 +757,80 @@ socket.on('proslediPomeriFiguru',(options) =>{
     if(mojField)
     if(mojField.children[0])
     mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
+
     console.log(mojaKlasaFigure, klasaFigure);
     if(mojaKlasaFigure && klasaFigure){
-      console.log(klasaFigure[1]);
-      console.log(mojaKlasaFigure[1]);
-      //first for W
-         if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '7') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '7') ){
+
+         if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '7') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '7') )
+         {
+          //minor castling for W
           const isEmpyFildForBishop = document.querySelector('[data-x="'+ 5 +'"][data-y="' + 7 + '"]').innerHTML; 
           const isEmpyFildForKnight = document.querySelector('[data-x="'+ 6 +'"][data-y="' + 7 + '"]').innerHTML; 
-          if(!isEmpyFildForBishop && !isEmpyFildForKnight)
-          {return true;}
-          else { return false;}
-          }else{
-      //then for B
-            if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '0') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '0') ){
-              const isEmpyFildForBishop = document.querySelector('[data-x="'+ 5 +'"][data-y="' + 0 + '"]').innerHTML; 
-              const isEmpyFildForKnight = document.querySelector('[data-x="'+ 6 +'"][data-y="' + 0 + '"]').innerHTML; 
-              if(!isEmpyFildForBishop && !isEmpyFildForKnight)
-              {return true;}
-              else{return false;}
-              }else{
-              return false;
-              }
-          }
-    }else{
-      return false;
+          if(!isEmpyFildForBishop && !isEmpyFildForKnight){return true;}
+          else{ return false;}       
+        
+         }else if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '0' && y2 === '7') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '0' && y1 === '7'))
+         {
+          //major casling for W
+            const isEmpyFildForBishop = document.querySelector('[data-x="'+ 1 +'"][data-y="' + 7 + '"]').innerHTML; 
+            const isEmpyFildForKnight = document.querySelector('[data-x="'+ 2 +'"][data-y="' + 7 + '"]').innerHTML;
+            const isEmpyFildForQueen = document.querySelector('[data-x="'+ 3 +'"][data-y="' + 7 + '"]').innerHTML; 
+            if(!isEmpyFildForBishop && !isEmpyFildForKnight && !isEmpyFildForQueen){return true;}
+            else{ return false;}
+         }else if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '7' && y2 === '0') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '7' && y1 === '0'))
+         {
+           //minor castling for B
+           const isEmpyFildForBishop = document.querySelector('[data-x="'+ 5 +'"][data-y="' + 0 + '"]').innerHTML; 
+           const isEmpyFildForKnight = document.querySelector('[data-x="'+ 6 +'"][data-y="' + 0 + '"]').innerHTML; 
+           if(!isEmpyFildForBishop && !isEmpyFildForKnight)
+           {return true;}
+           else{return false;}
+         }
+         else if((klasaFigure[1] === "king" && mojaKlasaFigure[1] === "rook" && x2 === '0' && y2 === '0') || (klasaFigure[1] === "rook" && mojaKlasaFigure[1] === "king" && x1 === '0' && y1 === '0'))
+         {
+           //major castling for B
+           const isEmpyFildForBishop = document.querySelector('[data-x="'+ 1 +'"][data-y="' + 0 + '"]').innerHTML; 
+           const isEmpyFildForKnight = document.querySelector('[data-x="'+ 2 +'"][data-y="' + 0 + '"]').innerHTML; 
+           const isEmpyFildForQueen = document.querySelector('[data-x="'+ 3 +'"][data-y="' + 0 + '"]').innerHTML;
+           if(!isEmpyFildForBishop && !isEmpyFildForKnight && !isEmpyFildForQueen)
+           {return true;}
+           else{return false;}
+         }
+         else
+         {
+           return false;
+         }
+     }
     }
-  }
   function rokadaMove(x1, y1, x2, y2){
-    const pomFirstImg = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
-    const pomSecondImg = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
-     const klasa = pomFirstImg.children[0].getAttribute("class").split("_");
+  const pomFirstImg = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
+  const pomSecondImg = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
+  const klasa = pomFirstImg.children[0].getAttribute("class").split("_");
+  if(x1 === '7' || x2 === '7')
+  {
     if(klasa[1] === "king"){
-    let newX = parseInt(x1) + 1;
-    document.querySelector('[data-x="'+ newX +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; //u pomSecondImg je top
-    newX = parseInt(x2) - 1;
-    document.querySelector('[data-x="'+ newX +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; //tu je kralj
+    document.querySelector('[data-x="'+ 5 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; 
+    document.querySelector('[data-x="'+ 6 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; 
     document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
     document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
     }else{
-      let newX = parseInt(x2) + 2;
-      document.querySelector('[data-x="'+ newX +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;//tu je kralj
-      newX = parseInt(x1) - 2;
-      document.querySelector('[data-x="'+ newX +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;//tu je top
+      document.querySelector('[data-x="'+ 6 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;
+      document.querySelector('[data-x="'+ 5 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;
       document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
       document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
     }
+  }else
+  {
+    if(klasa[1] === "king"){
+      document.querySelector('[data-x="'+ 3 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; 
+      document.querySelector('[data-x="'+ 2 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; 
+      document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
+      document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+      }else{
+        document.querySelector('[data-x="'+ 2 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;
+        document.querySelector('[data-x="'+ 3 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;
+        document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
+        document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+      }
+  }
   }
