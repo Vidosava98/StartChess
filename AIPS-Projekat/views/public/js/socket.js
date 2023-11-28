@@ -377,7 +377,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
       if(field){
         if(field.children[0]){
           klasaFigure =  field.children[0].getAttribute("class").split("_");
-          if(newX > -1 && newY > 0 && klasaFigure[0].toString() === "B" ){
+          if(newX > -1 && newY > -1 && klasaFigure[0].toString() === "B" ){
           list.push({x:newX,y:newY});
           listaDozvoljenihPoteza.push({x:newX,y:newY});
           }
