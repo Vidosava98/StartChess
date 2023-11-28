@@ -114,6 +114,12 @@ socket.on('sendMessage',(message, callback) => {
   io.to(user.room).emit('message',{message, username, datumSlanjaPoruke});
   callback();
 });
+socket.on('posaljiPojedenuFiguru', (pojedenaFigura) =>{
+  const user = getUser(socket.id);
+  if(user){
+  socket.broadcast.to(user.room).emit('proslediPojedenuFiguru', pojedenaFigura);
+  }
+})
 socket.on('pomeriFiguru',(options) => {
   const user = getUser(socket.id);
   if(user){
