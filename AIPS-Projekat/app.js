@@ -120,6 +120,13 @@ socket.on('posaljiPojedenuFiguru', (pojedenaFigura) =>{
   socket.broadcast.to(user.room).emit('proslediPojedenuFiguru', pojedenaFigura);
   }
 })
+socket.on('posaljiVracenuFiguru', (options) => {
+  const user = getUser(socket.id);
+  if(user){
+    console.log(options.x2, options.y2, options.html);
+  socket.broadcast.to(user.room).emit('primiVracenuFiguru', {x2:options.x2, y2:options.y2, html:options.html});
+  }
+})
 socket.on('pomeriFiguru',(options) => {
   const user = getUser(socket.id);
   if(user){

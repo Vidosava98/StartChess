@@ -39,6 +39,10 @@ socket.on('proslediPojedenuFiguru', (pojedenaFigura) => {
 console.log(pojedenaFigura);
 listaMojihPojedenihFigura.push(pojedenaFigura);
 })
+socket.on('primiVracenuFiguru', (options) => {
+  console.log(options.x2, options.y2, options.html);
+  document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.html;
+} )
 socket.on('prikaziPartiju',(options) => {
 
     document.querySelector("#result").innerHTML = options.r;
@@ -895,29 +899,28 @@ socket.on('proslediPomeriFiguru',(options) =>{
           console.log(listaMojihPojedenihFigura);
           if(listaMojihPojedenihFigura){
             listaMojihPojedenihFigura.forEach((el, index) => {
-            const elementKlasa = el.class.split("_");
-            console.log(elementKlasa);
-            console.log("U deo sam kad je pawn na kraju table")
+            let elementKlasa = el.class.split("_");
+            let html = el.html;
             if(elementKlasa[1] === 'queen')
             {
-              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = el.html;
-              console.log("ubacen je" + elementKlasa[1]);
+              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = html;
               listaMojihPojedenihFigura.splice(index,1);
+              socket.emit('posaljiVracenuFiguru',{x2, y2, html});
               return;
             }else if(elementKlasa[1] === 'rook'){
-              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = el.html;
-              console.log("ubacen je" + elementKlasa[1]);
+              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = html;
               listaMojihPojedenihFigura.splice(index,1);
+              socket.emit('posaljiVracenuFiguru',{x2, y2, html});
               return;
             }else if(elementKlasa[1] === 'knight'){
-              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = el.html;
-              console.log("ubacen je" + elementKlasa[1]);
+              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = html;
               listaMojihPojedenihFigura.splice(index,1);
+              socket.emit('posaljiVracenuFiguru',{x2, y2, html});
               return;
             }else if(elementKlasa[1] === 'bishop'){
-              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = el.html;
-              console.log("ubacen je" + elementKlasa[1]);
+              document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = html;
               listaMojihPojedenihFigura.splice(index,1);
+              socket.emit('posaljiVracenuFiguru',{x2, y2, html});
               return;
             }
           })
