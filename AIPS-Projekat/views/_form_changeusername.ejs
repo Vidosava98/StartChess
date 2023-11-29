@@ -12,19 +12,21 @@
   <body>
     <form action="/users/changeusername" method="POST">
           <form style="display:flex; flex-grow: 1; justify-content: center;">
-            <div class="izmeniprofil">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">@</span>
+            <div class="col-sm-6" style="margin-left: 25%;">
+              <div class="izmeniprofil">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                  </div>
+                  <input id="namechange" name="namechange" type="text" class="form-control rounded-right" required>
+                  <div class="invalid-feedback">
+                    Izaberite svoje novo korisničko ime.
+                  </div>
                 </div>
-                <input id="namechange" name="namechange" type="text" class="form-control rounded-right" required>
-                <div class="invalid-feedback">
-                  Izaberite svoje novo korisničko ime.
-                </div>
+                <button type="submit" style="width: 50%; margin-top: 2%; align-self: center;" class="btn btn-primary">Izmeni ime</button>
               </div>
-              <input class="nevidljivo" name="name" value="<%=name%>"></input>
-              <button type="submit" style="width: 50%; margin-top: 2%; align-self: center;" class="btn btn-primary">Izmeni ime</button>
             </div>
+            <input class="nevidljivo" name="name" value="<%=name%>"></input>
           </form>  
   </body>
 </html>

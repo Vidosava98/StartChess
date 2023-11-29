@@ -34,88 +34,6 @@ router.get("/dashboard", ensureAuthenticated, (req, res) => {
 });
 //http://localhost:3000/ZapocniPartiju
 router.post("/VratiPodatkePartije", async (req,res) =>{
-    // Game.findOne({ kraj: false })
-    // .then(async (game) => {
-    //   if(game.igraci.length == 1)
-    //   {
-    //   game.igraci.push(req.user._id);
-    //   game.kraj = true;
-    //   await game.save();
-    //   var hh = game.datumKreiranjaIgre.getHours();
-    //   var mm = game.datumKreiranjaIgre.getMinutes();
-    //    hh = hh < 10 ? '0' + hh : hh; 
-    //    mm = mm < 10 ? '0' + mm : mm;
-    //   let  curr_time = hh + ':' + mm;
-    //   User.find({ $or: [{_id:game.igraci[0]},{ _id:game.igraci[1]}] }).then((igraci) => {
-    //     console.log("U if sam");
-    //     res.render("partija", {
-    //       igraci: igraci,
-    //       game:  game,
-    //       vreme: curr_time,
-    //       timer:0,
-    //       popup:false
-    //     });
-    //   });
-    //   } else{
-    //     User.find({ $or: [{_id:game.igraci[0]},{ _id:game.igraci[1]}] }).then((igraci) => {
-    //       console.log("U else sam");
-    //       res.render("partija", {
-    //         igraci: igraci,
-    //         game:  game,
-    //         vreme: curr_time,
-    //         timer:0,
-    //         popup:false
-    //       });
-    //     });
-    //   }
-    // })
-    // .catch(async (err) => {
-    //   console.log("U catch sam");
-    //   var partija= new Game({
-    //       result:"Nema rezultata jos uvek",
-    //       kraj: false,
-    //   });
-    //   debugger;
-    //   partija.igraci.push(req.user._id);
-    //   //Treba da se igracu izmene neki atributi, npr treba da se doda koje je boje,bela ili crna
-    //   const sacuvanaPartija = await partija.save();
-    //   //console.log(sacuvanaPartija);
-    //   //Treba da se napravi jedna provera koja ce da ceka da jos neko doda svoj id u tu partiju
-    //   setInterval(async ()=>{
-    //     Game.findOne({ kraj: false })
-    //     .then((game) => {
-    //        console.log('length:' + game.igraci.length);
-    //        res.render("partija", {
-    //         igraci: [req.user],
-    //         game:  new Game({ result:"Ceka se drugi takmicar",
-    //         kraj: false}),
-    //         vreme: 0,
-    //         timer:0,
-    //         popup: true
-    //       });
-    //     }) 
-    //     .catch(async() =>{
-    //         var partijaIsta = await Game.findOne({_id : partija._id});
-    //         console.log('U catch 2 sam');
-    //         User.find({ $or: [{_id:partijaIsta.igraci[0]},{ _id:partijaIsta.igraci[1]}] }).then((igraci) => {
-    //           var hh = partijaIsta.datumKreiranjaIgre.getHours();
-    //           var mm = partijaIsta.datumKreiranjaIgre.getMinutes();
-    //            hh = hh < 10 ? '0' + hh : hh; 
-    //            mm = mm < 10 ? '0' + mm : mm;
-    //           let  curr_time = hh + ':' + mm;
-    //           console.log(curr_time);
-    //           res.render("partija", {
-    //             igraci: igraci,
-    //             game:  partijaIsta,
-    //             vreme: curr_time,
-    //             timer:0,
-    //             popup: false
-    //           });
-    //         });
-    //       })        
-    //   },30000)     
-    // });
-    //console.log(req.body['room']);
     res.render("partija", {
       igrac: req.user,
       game:  new Game({ result:"Ceka se drugi takmicar",
@@ -170,18 +88,14 @@ router.get("/OdigranePartije", async (req,res) =>{
       await asyncForEach(games, async (game) => {
         if (req.user._id.equals(game.igraci[0])){
           if (game.igraci[1] != null) {
-            console.log('if game.igraci[1] ' + game.igraci[1] + ' game.igraci[0] ' + game.igraci[0]);
             const user = await User.findOne({_id : ObjectId(game.igraci[1])});
-            console.log(game);
             if(user != null){
             vratiListu.push(user);
             odigraneIgre.push(game);}
           }
         }
         else if (req.user._id.equals(game.igraci[1])){
-          console.log('if game.igraci[0] ' + game.igraci[0] + 'game.igraci[1] ' + game.igraci[1]);
           const user =  await User.findOne({_id: ObjectId(game.igraci[0])});
-          console.log(game);
           if(user != null){
           vratiListu.push(user);
           odigraneIgre.push(game);}

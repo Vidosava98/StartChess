@@ -847,7 +847,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
            return false;
          }
      }
-    }
+  }
   function rokadaMove(x1, y1, x2, y2){
   const pomFirstImg = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
   const pomSecondImg = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');

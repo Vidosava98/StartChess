@@ -12,23 +12,25 @@
   <body>
         <form style="display:flex; flex-grow: 1; justify-content: center;"
           action="/users/changeProfileImage" method="POST" enctype="multipart/form-data">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="avatar">Unesite novu sliku profila</label>
-                    <input
-                      type="file" 
-                      accept="image/png, image/jpeg"
-                      id="avatar"
-                      name="avatar"
-                      class="form-control",
-                      value="<%= typeof avatar != 'undefined' ? avatar : '' %>"
-                    />
-                </div>
-                <input class="nevidljivo" name="email" value="<%=email%>"></input>
-                <button type="submit" class="btn btn-primary btn-block" style="width: 50%; margin-top: 2%; align-self: center;">
-                    Primeni dodatu sliku
+          <div class="col-sm-6" style="margin-left: 25%;">
+            <div class="form-group">
+                <label for="avatar">Unesite novu sliku profila:</label>
+                  <input
+                    type="file" 
+                    accept="image/png, image/jpeg"
+                    id="avatar"
+                    name="avatar"
+                    class="form-control",
+                    value="<%= typeof avatar != 'undefined' ? avatar : '' %>"
+                />
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary btn-block" style="width: 50%; margin-top: 2%; margin-left:25%;">
+                  Primeni dodatu sliku
                 </button>
             </div>
+          </div>
+            <input class="nevidljivo" name="email" value="<%=email%>"></input>
         </form> 
   </body>
 </html>
