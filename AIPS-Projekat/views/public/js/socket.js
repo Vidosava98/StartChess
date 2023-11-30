@@ -2,7 +2,13 @@ const socket = io();
 let i = 0;
 let s, m, h;
 s = m = h = 0;
-let listaDozvoljenihPoteza = [];
+const listaSlova = ['A','B','C','D','E','F','G','H'];
+let listaPoteza = [];
+for(let i = 8; i >= 1; i-- )
+for(let j = 1; j <= 8; j++ )
+{ listaPoteza.push(i + listaSlova[j-1]); }
+console.log(listaPoteza);
+export let listaDozvoljenihPoteza = [];
 let listaPojedenihFigura = [];
 let listaMojihPojedenihFigura = [];
 let intervalID = null;
@@ -13,9 +19,31 @@ const $obaIgraca = document.querySelector("#obaIgraca");
 const $messageForm = document.querySelector("#poruke-forma");
 const $messageFormButton = document.querySelector("#messageFormButton");
 const $messages = document.querySelector("#messages");
-const $messageFormInput = document.querySelector("#inputMessage")
+const $messageFormInput = document.querySelector("#inputMessage");
 let result = document.querySelector("#result").innerHTML;
 let vreme = document.querySelector('#vreme').innerHTML;
+
+import { PawnStrategy } from './PawnStrategy.js';
+import { RookStrategy } from './RookStrategy.js';
+import { BishopStrategy } from './BishopStrategy.js';
+import { KingStrategy } from './KingStrategy.js';
+import { KnightStrategy } from './KnightStrategy.js';
+import { ChessPieceContext } from './ChessPieceContext.js';
+// Usage example:
+const pawnStrategy = new PawnStrategy();
+const rookStrategy = new RookStrategy();
+const bishopStrategy = new BishopStrategy();
+const kingStrategy = new KingStrategy();
+const knightStrategy = new KnightStrategy();
+
+let chessPieceContext = new ChessPieceContext(pawnStrategy);
+chessPieceContext = new ChessPieceContext(rookStrategy);
+chessPieceContext = new ChessPieceContext(bishopStrategy);
+chessPieceContext = new ChessPieceContext(kingStrategy);
+chessPieceContext = new ChessPieceContext(knightStrategy);
+// Now, you can change the strategy dynamically:
+
+
 
 socket.on('ack', (message) => {
     console.log(message);
@@ -36,13 +64,15 @@ socket.emit('join', { email: email, room : room.toString()}, (error) => {
     }
 });
 socket.on('proslediPojedenuFiguru', (pojedenaFigura) => {
-console.log(pojedenaFigura);
 listaMojihPojedenihFigura.push(pojedenaFigura);
-})
+});
+socket.on('proslediPotez', (options) => {
+  document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"> <span>${options.username}</span><div style="font-size:20px"> ${options.figuraKojaSeKrece}${options.potez}</div>`);
+});
 socket.on('primiVracenuFiguru', (options) => {
   console.log(options.x2, options.y2, options.html);
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.html;
-} )
+});
 socket.on('prikaziPartiju',(options) => {
 
     document.querySelector("#result").innerHTML = options.r;
@@ -145,34 +175,41 @@ socket.on('proslediPomeriFiguru',(options) =>{
       h = h + 1
       }
     }
-    hh = (h<10) ? "0" + h : h; 
-    mm = (m<10) ? "0" + m : m; 
-    ss = (s<10) ? "0" + s : s; 
+    const hh = (h<10) ? "0" + h : h; 
+    const mm = (m<10) ? "0" + m : m; 
+    const ss = (s<10) ? "0" + s : s; 
     document.getElementById("idCountDown").innerHTML =  hh + ":" + mm + ":" + ss;
   }
+
   function dozvoljeniPotezi(x, y){
-  const xx = parseInt(x);
-  const yy = parseInt(y);
     const klasaSlike = document.querySelector('[data-x="'+ x +'"][data-y="' + y + '"]').children[0].getAttribute("class"); 
     let elementiSlikeFigure = klasaSlike.split("_");
     switch(elementiSlikeFigure[1].toString()) {
       case "pawn":
-        dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure);
+        chessPieceContext.setStrategy(pawnStrategy);
+        chessPieceContext.dozvoljeniPotezi(x, y);
         break;
       case "rook":
-        dozvoljeniPoteziRook(xx, yy);
+        chessPieceContext.setStrategy(rookStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
         break;
       case "queen":
-        dozvoljeniPoteziQueen(xx, yy);
+        chessPieceContext.setStrategy(rookStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
+        chessPieceContext.setStrategy(bishopStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
         break;
       case "bishop":
-        dozvoljeniPoteziBishop(xx, yy, 8);
+        chessPieceContext.setStrategy(bishopStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
         break;
       case "king":
-        dozvoljeniPoteziKing(xx, yy);
+        chessPieceContext.setStrategy(kingStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
         break;
       case "knight":
-        dozvoljeniPoteziKnight(xx, yy);
+        chessPieceContext.setStrategy(knightStrategy);
+        chessPieceContext.dozvoljeniPotezi(x,y);
         break;
       default:
         listaDozvoljenihPoteza = [];
@@ -217,12 +254,15 @@ socket.on('proslediPomeriFiguru',(options) =>{
     const Field = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
     if(Field)
     if(Field.children[0]){
-    klasaFigure = Field.children[0].getAttribute("class").split("_");
-    //console.log(Field.innerHTML);
-     const pojedenaFigura = { html:Field.innerHTML, class:Field.children[0].getAttribute("class")};
+    const pojedenaFigura = { html:Field.innerHTML, class:Field.children[0].getAttribute("class")};
     listaPojedenihFigura.push(pojedenaFigura);
     socket.emit('posaljiPojedenuFiguru', pojedenaFigura);
     }
+    //figura koja se krece sigurno postoji
+    const fieldPrvi = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
+    const figuraKojaSeKrece = fieldPrvi.innerHTML;
+    const potez = listaPoteza[parseInt(x2) + parseInt(y2) * 8];
+    socket.emit('posaljiPotez',{potez, figuraKojaSeKrece});
     pomeriFiguru(x1,y1,x2,y2,img,tile,false);
     removeGreenField();
     removeRedField();
@@ -279,455 +319,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
    }   
   
   }
-  function dozvoljeniPoteziPawn(xx, yy, elementiSlikeFigure){
-    let list = [];
-    let newX = null;
-    let newY = null;
-    let listFirstMoveB = [{x:0,y:1},{x:1,y:1},{x:2,y:1},{x:3,y:1},{x:4,y:1},{x:5,y:1},{x:6,y:1},{x:7,y:1}];
-    let listFirstMoveW = [{x:0,y:6},{x:1,y:6},{x:2,y:6},{x:3,y:6},{x:4,y:6},{x:5,y:6},{x:6,y:6},{x:7,y:6}];
-    if(elementiSlikeFigure[0].toString() === "B" )
-    {   
-       newX = xx;
-       newY = yy + 1;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          list.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          listFirstMoveB.forEach((element) => {
-            if(element.x === xx && element.y === yy){
-              newX = xx;
-              newY = yy + 2;
-              field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-              if(field){
-                if(!field.children[0]){
-                  list.push({x:newX,y:newY});
-                  listaDozvoljenihPoteza.push({x:newX,y:newY});
-                  }
-              }
-            }
-          })
-          }
-      }
-    }
-    else if(elementiSlikeFigure[0].toString() === "W"){
-       newX = xx;
-       newY = yy - 1;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          list.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          listFirstMoveW.forEach((element) => {
-            if(element.x === xx && element.y === yy){
-              newX = xx;
-              newY = yy - 2;
-              field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-              if(field){
-                if(!field.children[0]){
-                  list.push({x:newX,y:newY});
-                  listaDozvoljenihPoteza.push({x:newX,y:newY});
-                  }
-              }
-            }
-          })
-          }
-      }
-    }
-    colorInGreen(list);
-    list = [];
-    if(elementiSlikeFigure[0].toString() === "B" )
-    {         
-      //left
-      newX = xx - 1;
-      newY = yy + 1;
-     let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-     let klasaFigure = [];
-     if(field){
-      if(field.children[0])
-     {
-     klasaFigure =  field.children[0].getAttribute("class").split("_");
-     if(newX > -1 && newY < 8 && klasaFigure[0].toString() === "W" ){
-     list.push({x:newX,y:newY});
-     listaDozvoljenihPoteza.push({x:newX,y:newY}); }
-     }
-     }
-     //right
-     newX = xx + 1;
-     newY = yy + 1;
-     field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-     if(field){
-      if(field.children[0])
-     {
-      klasaFigure =  field.children[0].getAttribute("class").split("_");
-      if(newX < 8 && newY < 8 && klasaFigure[0].toString() === "W"){
-        list.push({x:newX,y:newY});
-        listaDozvoljenihPoteza.push({x:newX,y:newY}); }
-     }
-     }
-    }
-    else if(elementiSlikeFigure[0].toString() === "W")
-    {
-
-      //left
-       newX = xx - 1;
-       newY = yy - 1;
-       let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-       let klasaFigure = [];
-      if(field){
-        if(field.children[0]){
-          klasaFigure =  field.children[0].getAttribute("class").split("_");
-          if(newX > -1 && newY > -1 && klasaFigure[0].toString() === "B" ){
-          list.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }
-          }
-      }
-      //right
-      newX = xx + 1;
-      newY = yy - 1;
-      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(field.children[0]){
-          klasaFigure =  field.children[0].getAttribute("class").split("_");
-          if(newX < 8 && newY > -1 && klasaFigure[0].toString() === "B"){
-          list.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }
-          }
-      }
-    }
-    colorInRed(list);
-  }
-  function dozvoljeniPoteziRook(xx, yy){
-    let listZeleno = [];  
-    let listCrveno = [];
-    const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
-    const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
-    let newX = null;
-    let newY = null;
-
-    for(let i = 1; i < 8; i++){
-      //left
-      newX = xx - i;
-      newY = yy;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //right
-      newX = xx + i;
-      newY = yy;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //up
-      newX = xx;
-      newY = yy - i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < 8; i++){
-      //down
-      newX = xx;
-      newY = yy + i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});      
-            }
-            break;
-          }
-      }
-    }
-
-    colorInGreen(listZeleno);
-    colorInRed(listCrveno);
-  }
-  function dozvoljeniPoteziQueen(xx, yy){
-    dozvoljeniPoteziRook(xx, yy);
-    dozvoljeniPoteziBishop(xx, yy, 8);
-  }
-  function dozvoljeniPoteziBishop(xx, yy, num){
-    let listZeleno = [];  
-    let listCrveno = [];
-    const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
-    const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
-    let newX = null;
-    let newY = null;
-
-    for(let i = 1; i < num; i++){
-      //left-up
-      newX = xx - i;
-      newY = yy - i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < num; i++){
-      //left-down
-      newX = xx - i;
-      newY = yy + i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < num; i++){
-      //right-up
-      newX = xx + i;
-      newY = yy - i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            break;
-          }
-      }
-    }
-    for(let i = 1; i < num; i++){
-      //right-down
-      newX = xx + i;
-      newY = yy + i;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else
-          {
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});      
-            }
-            break;
-          }
-      }
-    }
-
-    colorInGreen(listZeleno);
-    colorInRed(listCrveno);
-  }
-  function dozvoljeniPoteziKing(xx, yy){
-
-    let listZeleno = [];
-    let listCrveno = [];
-    let newX = null;
-    let newY = null;
-    const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
-    const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
-    //down
-       newX = xx;
-       newY = yy + 1;
-      let field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else{
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-          }
-      }
-    //up
-       newX = xx;
-       newY = yy - 1;
-      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-      if(field){
-        if(!field.children[0]){
-            listZeleno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }else{
-            const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-            if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-            {
-            listCrveno.push({x:newX,y:newY});
-            listaDozvoljenihPoteza.push({x:newX,y:newY});
-            }
-            }
-      }
-    //right
-      newX = xx + 1;
-      newY = yy;
-      field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-     if(field){
-       if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-        }else{
-          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-          {
-          listCrveno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }
-        }
-     }
-    //left
-      newX = xx - 1;
-      newY = yy;
-     field = document.querySelector('[data-x="'+ newX +'"][data-y="' + newY + '"]');
-     if(field){
-       if(!field.children[0]){
-          listZeleno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-        }else{
-          const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-          if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-          {
-          listCrveno.push({x:newX,y:newY});
-          listaDozvoljenihPoteza.push({x:newX,y:newY});
-          }
-        }
-     }
-    colorInGreen(listZeleno);
-    colorInRed(listCrveno);
-    dozvoljeniPoteziBishop(xx, yy, 2);
-  }
-  function dozvoljeniPoteziKnight(xx, yy){
-    let listZeleno = [];
-    let listCrveno = [];
-    let newX = null;
-    let newY = null;
-    const mojField = document.querySelector('[data-x="'+ xx +'"][data-y="' + yy + '"]');
-    const mojaKlasaFigure = mojField.children[0].getAttribute("class").split("_");
-    let listXY = [];
-       newX = xx - 2;
-       newY = yy + 1;
-       listXY.push({x:newX, y:newY});
-       newX = xx - 1;
-       newY = yy + 2;
-       listXY.push({x:newX, y:newY});
-       newX = xx + 2;
-       newY = yy + 1;
-       listXY.push({x:newX, y:newY});
-       newX = xx + 1;
-       newY = yy + 2;
-       listXY.push({x:newX, y:newY});
-       newX = xx - 2;
-       newY = yy - 1;
-       listXY.push({x:newX, y:newY});
-       newX = xx - 1;
-       newY = yy - 2;
-       listXY.push({x:newX, y:newY});
-       newX = xx + 2;
-       newY = yy - 1;
-       listXY.push({x:newX, y:newY});
-       newX = xx + 1;
-       newY = yy - 2;
-       listXY.push({x:newX, y:newY});
-       listXY.forEach((element) => {
-        let field = document.querySelector('[data-x="'+ element.x +'"][data-y="' + element.y + '"]');
-        if(field){
-          if(!field.children[0]){
-            listZeleno.push({x:element.x,y:element.y});
-            listaDozvoljenihPoteza.push({x:element.x,y:element.y});
-            }else{
-              const klasaFigure =  field.children[0].getAttribute("class").split("_");         
-              if(klasaFigure[0].toString() !== mojaKlasaFigure[0].toString())
-              {
-              listCrveno.push({x:element.x,y:element.y});
-              listaDozvoljenihPoteza.push({x:element.x,y:element.y});
-              }
-            }
-        }
-       });
-      
-    colorInGreen(listZeleno);
-    colorInRed(listCrveno);
-  }
-  function colorInRed(list){
+  export function colorInRed(list){
     list.forEach(function(currentElement, index) 
     { 
       const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
@@ -736,7 +328,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
 
     });
   }
-  function colorInGreen(list){
+  export function colorInGreen(list){
     list.forEach(function(currentElement, index) 
     { 
       const element = document.querySelector('[data-x="'+ currentElement.x +'"][data-y="' + currentElement.y + '"]');
@@ -885,7 +477,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
     const Field = document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]');
     if(Field)
     if(Field.children[0]){
-    klasaFigure = Field.children[0].getAttribute("class").split("_");
+    const klasaFigure = Field.children[0].getAttribute("class").split("_");
     if(klasaFigure[1].toString() === "pawn"){
       console.log(klasaFigure);
       if(klasaFigure[0].toString()  === 'W'){
