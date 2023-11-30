@@ -63,9 +63,12 @@ socket.emit('join', { email: email, room : room.toString()}, (error) => {
         location.href = '/'
     }
 });
-socket.on('proslediPojedenuFiguru', (pojedenaFigura) => {
-listaMojihPojedenihFigura.push(pojedenaFigura);
+socket.on('proslediPojedenuFiguru', (options) => {
+listaMojihPojedenihFigura.push({html:options.pojedenaFigura.html, class: options.pojedenaFigura.class});
 });
+socket.on('updateNumbersOfFigure',(options) => {
+  document.querySelector("#numbersOffigure").innerHTML = options.numbersOfFigure;
+})
 socket.on('proslediPotez', (options) => {
   document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"> <span>${options.username}</span><div style="font-size:20px"> ${options.figuraKojaSeKrece}${options.potez}</div>`);
 });
@@ -76,7 +79,9 @@ socket.on('primiVracenuFiguru', (options) => {
 socket.on('prikaziPartiju',(options) => {
 
     document.querySelector("#result").innerHTML = options.r;
+    document.querySelector("#numbersOffigure").innerHTML = options.n;
     document.querySelector('#vreme').innerHTML = moment(options.d).format('D.M.YYYY HH:mm');
+    document.querySelector('#idGame').innerHTML = options.id;
     $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #bbc8f0; margin:5%">
     <div class="card-body">
       <h5>Opis igrača</h5>
@@ -111,9 +116,10 @@ socket.on('prikaziPartiju',(options) => {
     }else{
       console.log('Nije moj red');
     }
-  setInterval(myGreeting, 1000);
-
 });
+socket.on('updateTimer', (options) => {
+  document.getElementById("idCountDown").innerHTML = options.timeRemaining;
+})
 $messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   $messageFormButton.setAttribute('disabled', 'disabled');
@@ -164,23 +170,6 @@ socket.on('proslediPomeriFiguru',(options) =>{
     intervalID = setInterval(timerCounter, 1000);
   }
 });
-  function myGreeting() {
-    s = s + 1;
-    if(s > 60){
-      s = 0;
-      m = m + 1;
-      if(m > 60)
-      {
-      m = 0;
-      h = h + 1
-      }
-    }
-    const hh = (h<10) ? "0" + h : h; 
-    const mm = (m<10) ? "0" + m : m; 
-    const ss = (s<10) ? "0" + s : s; 
-    document.getElementById("idCountDown").innerHTML =  hh + ":" + mm + ":" + ss;
-  }
-
   function dozvoljeniPotezi(x, y){
     const klasaSlike = document.querySelector('[data-x="'+ x +'"][data-y="' + y + '"]').children[0].getAttribute("class"); 
     let elementiSlikeFigure = klasaSlike.split("_");
@@ -256,7 +245,8 @@ socket.on('proslediPomeriFiguru',(options) =>{
     if(Field.children[0]){
     const pojedenaFigura = { html:Field.innerHTML, class:Field.children[0].getAttribute("class")};
     listaPojedenihFigura.push(pojedenaFigura);
-    socket.emit('posaljiPojedenuFiguru', pojedenaFigura);
+    const id = document.querySelector("#idGame").innerHTML;
+    socket.emit('posaljiPojedenuFiguru', {pojedenaFigura, id});
     }
     //figura koja se krece sigurno postoji
     const fieldPrvi = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
@@ -491,6 +481,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
           console.log(listaMojihPojedenihFigura);
           if(listaMojihPojedenihFigura){
             listaMojihPojedenihFigura.forEach((el, index) => {
+              console.log(el);
             let elementKlasa = el.class.split("_");
             let html = el.html;
             if(elementKlasa[1] === 'queen')

@@ -9,15 +9,15 @@ const mongoose = require("mongoose");
 const socketio = require("socket.io");
 const User = require('./models/User');
 const Game = require('./models/Game');
-//findPackageJSONFrom(path.dirname(require.resolve('pkg')));
-//const pkg = require.resolve('pkg');
+//Observer pattern
+const ChessTimer = require('./utils/Observer/ChessTimer');
+const PlayerScoreboard = require('./utils/Observer/PlayerScoreboard');
+
 var app = express();
 app.use(express.static(__dirname + "/views"));
 app.use(bodyParser.json());
-//app.use("/uploads", express.static("uploads"));
-app.use("/slikeKorisnika", express.static("slikeKorisnika"));
 require("./config/passport")(passport);
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
+const { addUser, removeUser, getUser } = require('./utils/users')
 // Mongo
 const db = require("./config/keys").MongoURI;
 // Connect
@@ -54,16 +54,17 @@ app.use("/game",require("./routes/game"));
 app.use("/changes", require("./config/changes"));
 
 
+
 var server = http.createServer(app);
 const io = socketio(server);
+const chessTimer = new ChessTimer(0,0,0,0);
 io.on('connection',(socket) => {
   console.log("New webSocket connection");
   socket.on('join', async (options, callback) => {
     const email = options.email;
     const userFromDatebase = await User.findOne({email:email});
     const username = userFromDatebase.name.toString();
-    console.log(email);
-    console.log(userFromDatebase);
+
     const { error, user } = addUser({ id: socket.id, username: username, room:options.room });
 
     if (error) {
@@ -73,6 +74,8 @@ io.on('connection',(socket) => {
     socket.join(user.room);
     socket.broadcast.to(user.room).emit('info',`${email}`);
     socket.emit('ack', "Server je video da si stigao. Dobrodosao");
+    const playerScoreboard = new PlayerScoreboard(socket);
+    chessTimer.addTimerObserver(playerScoreboard);
     callback();
 });
 socket.on('doslaoba', async (options)=>{
@@ -94,14 +97,16 @@ socket.on('doslaoba', async (options)=>{
     console.log(user2Updated);
 
   io.to(options.room).emit('prikaziPartiju', {r: saveGame.result, n: saveGame.numbersOfFigure, d: saveGame.datumKreiranjaIgre,
-  user1: saveGame.igraci[0], user2: saveGame.igraci[1]
+  user1: saveGame.igraci[0], user2: saveGame.igraci[1], id : saveGame._id
   });
+  chessTimer.startTimer();
 });
 socket.on('disconnect', () => {
   const user = removeUser(socket.id);
   if (user) {
       socket.broadcast.to(user.room).emit('ack', `${user.username} has left the game!`);
   }
+  chessTimer.stopTimer();
 });
 socket.on('sendMessage',(message, callback) => {
   console.log('Stigla je poruka sledeceg sadrzaja: ' + message);
@@ -114,11 +119,16 @@ socket.on('sendMessage',(message, callback) => {
   io.to(user.room).emit('message',{message, username, datumSlanjaPoruke});
   callback();
 });
-socket.on('posaljiPojedenuFiguru', (pojedenaFigura) =>{
+socket.on('posaljiPojedenuFiguru', async (options) =>{
   const user = getUser(socket.id);
   if(user){
-  socket.broadcast.to(user.room).emit('proslediPojedenuFiguru', pojedenaFigura);
+  socket.broadcast.to(user.room).emit('proslediPojedenuFiguru', {pojedenaFigura: options.pojedenaFigura});
   }
+  const gameUpdate = await Game.findById({_id: options.id});
+  gameUpdate.numbersOfFigure = gameUpdate.numbersOfFigure - 1;
+  const saveGame = await gameUpdate.save();
+  console.log(saveGame);
+  io.to(user.room).emit('updateNumbersOfFigure', {numbersOfFigure: saveGame.numbersOfFigure});
 })
 socket.on('posaljiVracenuFiguru', (options) => {
   const user = getUser(socket.id);

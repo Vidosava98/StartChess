@@ -63,6 +63,7 @@
             <div class="card" style="background-color: #bbc8f0; margin-top: 3%; margin-left: 1.5%; margin-right: 19.9%; flex-direction: row;">
                 <div style="margin: 1%;"><label>Room </label><div id ="room"><%=room%></div></div>
                 <div style="margin: 1%;"><label>Moj email: </label><div id ="email"><%=email%></div></div>
+                <div style="margin: 1%;"><label>Broj figura na tabli: </label><div id ="numbersOffigure"></div></div>
                 <div style="margin: 1%;"><label>Rezultat: </label><div id ="result" style="color:#c41515"><%=game.result%></div></div>
                 <div style="margin: 1%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
                 <div style="margin: 1%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
@@ -179,6 +180,7 @@
             <div style="visibility:hidden;"><div></div><div id="myTurn">false</div></div>
             <div style="visibility:hidden;"><div></div><div id="myColor">B</div></div>
             <div style="visibility:hidden;"><div></div><div id="firstMove">true</div></div>
+            <div style="visibility:hidden;"><div></div><div id="idGame"></div></div>
         </div>
            <script src="/socket.io/socket.io.js"></script>
            <script  type="module" src="./public/js/socket.js"></script>
