@@ -13,6 +13,84 @@ const Game = require('./models/Game');
 const ChessTimer = require('./utils/Observer/ChessTimer');
 const PlayerScoreboard = require('./utils/Observer/PlayerScoreboard');
 
+//Command
+const Invoker = require('./utils/Command/Invoker');
+const Command = require('./utils/Command/Command');
+
+
+// ConcreteCommand 1
+class ProslediPotezCommand extends Command {
+  constructor(receiver, io, user, options) {
+    super();
+    this.receiver = receiver;
+    this.io = io;
+    this.user = user;
+    this.options = options;
+  }
+
+  execute() {
+    this.receiver.proslediPotez(this.io, this.user, this.options);
+  }
+}
+// ConcreteCommand 2
+class ProslediRokadaPotezCommand extends Command {
+  constructor(receiver, socket, user, options) {
+    super();
+    this.receiver = receiver;
+    this.socket = socket;
+    this.user = user;
+    this.options = options;
+  }
+  execute() {
+    this.receiver.proslediRokadu(this.socket, this.user, this.options);
+  }
+}
+// ConcreteCommand 3
+class ProslediPomeriFiguruCommand extends Command {
+  constructor(receiver, socket, user, options) {
+    super();
+    this.receiver = receiver;
+    this.socket = socket;
+    this.user = user;
+    this.options = options;
+  }
+  execute() {
+    this.receiver.proslediPomeriFiguru(this.socket, this.user, this.options);
+  }
+}
+// ConcreteCommand 4
+class PrimiVracenuFiguruCommand extends Command {
+  constructor(receiver, socket, user, options) {
+    super();
+    this.receiver = receiver;
+    this.socket = socket;
+    this.user = user;
+    this.options = options;
+  }
+  execute() {
+    this.receiver.primiVracenuFiguru(this.socket, this.user, this.options);
+  }
+}
+// Receiver
+class Receiver {
+    proslediPotez(io, user, options) {
+        io.to(user.room).emit('proslediPotez', {potez: options.potez, figuraKojaSeKrece: options.figuraKojaSeKrece, username: user.username});
+    }
+    proslediRokadu(socket, user, options) {
+      socket.broadcast.to(user.room).emit('primiRokaduZaPrikazUIstorijiPoteza', {x1:options.x1 , y1:options.y1, x2:options.x2, y2:options.y2});
+      }
+    proslediPomeriFiguru(socket, user, options){
+      socket.broadcast.to(user.room).emit('proslediPomeriFiguru',{x1: options.x1, y1: options.y1, x2:options.x2, y2: options.y2, img: options.img, krajJe: options.krajJe, rokada: options.rokada});
+    }
+    primiVracenuFiguru(socket, user, options){
+      socket.broadcast.to(user.room).emit('primiVracenuFiguru', {x2:options.x2, y2:options.y2, html:options.html});
+    }
+
+}
+
+const receiver = new Receiver();
+const invoker = new Invoker();
+
 var app = express();
 app.use(express.static(__dirname + "/views"));
 app.use(bodyParser.json());
@@ -132,14 +210,18 @@ socket.on('posaljiPojedenuFiguru', async (options) =>{
 })
 socket.on('posaljiVracenuFiguru', (options) => {
   const user = getUser(socket.id);
+  const command = new PrimiVracenuFiguruCommand(receiver, socket, user, options);
+  invoker.setCommand(command);
   if(user){
-  socket.broadcast.to(user.room).emit('primiVracenuFiguru', {x2:options.x2, y2:options.y2, html:options.html});
+  invoker.pozoviKonkretnuKomandu();
   }
 })
 socket.on('pomeriFiguru',(options) => {
   const user = getUser(socket.id);
+  const command = new ProslediPomeriFiguruCommand(receiver, socket, user, options);
+  invoker.setCommand(command);
   if(user){
-  socket.broadcast.to(user.room).emit('proslediPomeriFiguru',{x1: options.x1, y1: options.y1, x2:options.x2, y2: options.y2, img: options.img, krajJe: options.krajJe, rokada: options.rokada});
+  invoker.pozoviKonkretnuKomandu(); 
   }
   if(options.krajJe){
     chessTimer.stopTimer();
@@ -147,15 +229,19 @@ socket.on('pomeriFiguru',(options) => {
 })
 socket.on('posaljiPotez',(options) => {
   const user = getUser(socket.id);
+  const command = new ProslediPotezCommand(receiver, io, user, options);
+  invoker.setCommand(command);
   if(user){
-    io.to(user.room).emit('proslediPotez', {potez: options.potez, figuraKojaSeKrece: options.figuraKojaSeKrece, username: user.username});
-    }
+  invoker.pozoviKonkretnuKomandu(); 
+  }
 })
 socket.on('posaljiRokaduZaPrikazUIstorijiPoteza',(options) => 
 {
   const user = getUser(socket.id);
+  const command = new ProslediRokadaPotezCommand(receiver, socket, user, options);
+  invoker.setCommand(command);
   if(user){
-    socket.broadcast.to(user.room).emit('primiRokaduZaPrikazUIstorijiPoteza', {x1:options.x1 , y1:options.y1, x2:options.x2, y2:options.y2});
+    invoker.pozoviKonkretnuKomandu();
     }
 });
 });
