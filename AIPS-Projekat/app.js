@@ -142,6 +142,9 @@ socket.on('pomeriFiguru',(options) => {
   if(user){
   socket.broadcast.to(user.room).emit('proslediPomeriFiguru',{x1: options.x1, y1: options.y1, x2:options.x2, y2: options.y2, img: options.img, krajJe: options.krajJe, rokada: options.rokada});
   }
+  if(options.krajJe){
+    chessTimer.stopTimer();
+  }
 })
 socket.on('posaljiPotez',(options) => {
   const user = getUser(socket.id);
@@ -149,6 +152,13 @@ socket.on('posaljiPotez',(options) => {
     io.to(user.room).emit('proslediPotez', {potez: options.potez, figuraKojaSeKrece: options.figuraKojaSeKrece, username: user.username});
     }
 })
+socket.on('posaljiRokaduZaPrikazUIstorijiPoteza',(options) => 
+{
+  const user = getUser(socket.id);
+  if(user){
+    socket.broadcast.to(user.room).emit('primiRokaduZaPrikazUIstorijiPoteza', {x1:options.x1 , y1:options.y1, x2:options.x2, y2:options.y2});
+    }
+});
 });
 server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});
 

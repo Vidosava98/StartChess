@@ -72,6 +72,14 @@ socket.on('updateNumbersOfFigure',(options) => {
 socket.on('proslediPotez', (options) => {
   document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"> <span>${options.username}</span><div style="font-size:20px"> ${options.figuraKojaSeKrece}${options.potez}</div>`);
 });
+socket.on('primiRokaduZaPrikazUIstorijiPoteza', (options) =>{
+  const potez1 = listaPoteza[parseInt(options.x1) + parseInt(options.y1) * 8];
+  const potez2 = listaPoteza[parseInt(options.x2) + parseInt(options.y2) * 8];
+  const img1 = document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML
+  const img2 = document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML
+  document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"><span> Rokada </span> <div style="font-size:20px"> ${img1}${potez1}</div> <div style="font-size:20px"> ${img2}${potez2}</div>`);
+});
+    
 socket.on('primiVracenuFiguru', (options) => {
   console.log(options.x2, options.y2, options.html);
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.html;
@@ -436,29 +444,35 @@ socket.on('proslediPomeriFiguru',(options) =>{
   const klasa = pomFirstImg.children[0].getAttribute("class").split("_");
   if(x1 === '7' || x2 === '7')
   {
+    //right side
     if(klasa[1] === "king"){
     document.querySelector('[data-x="'+ 5 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; 
     document.querySelector('[data-x="'+ 6 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; 
     document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
     document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+    socket.emit('posaljiRokaduZaPrikazUIstorijiPoteza',{x1:6, y1:y1, x2:5, y2:y2});
     }else{
       document.querySelector('[data-x="'+ 6 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;
       document.querySelector('[data-x="'+ 5 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;
       document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
       document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+      socket.emit('posaljiRokaduZaPrikazUIstorijiPoteza',{x1:5, y1:y1, x2:6, y2:y2});
     }
   }else
   {
+    //left side
     if(klasa[1] === "king"){
       document.querySelector('[data-x="'+ 3 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML; 
       document.querySelector('[data-x="'+ 2 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML; 
       document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
       document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+      socket.emit('posaljiRokaduZaPrikazUIstorijiPoteza',{x1:2, y1:y1, x2:3, y2:y2});
       }else{
         document.querySelector('[data-x="'+ 2 +'"][data-y="' + y1 + '"]').innerHTML = pomSecondImg.innerHTML;
         document.querySelector('[data-x="'+ 3 +'"][data-y="' + y2 + '"]').innerHTML = pomFirstImg.innerHTML;
         document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]').innerHTML = '';
         document.querySelector('[data-x="'+ x2 +'"][data-y="' + y2 + '"]').innerHTML = '';
+        socket.emit('posaljiRokaduZaPrikazUIstorijiPoteza',{x1:3, y1:y1, x2:2, y2:y2});
       }
   }
   }
