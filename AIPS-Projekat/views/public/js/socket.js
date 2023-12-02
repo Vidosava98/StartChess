@@ -56,6 +56,7 @@ socket.on('info', (email2) => {
 socket.on('message', (options) => {
   let vreme = moment(options.datumSlanjaPoruke).format('HH:mm:ss');
   $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;"><span>${options.username}</span> <span>${vreme} </span> <p style="font-size:20px"> ${options.message}</p></div>`)
+  document.getElementById('messages').scrollTop = 9999999; 
 });
 socket.emit('join', { email: email, room : room.toString()}, (error) => {
     if (error) {
@@ -71,6 +72,7 @@ socket.on('updateNumbersOfFigure',(options) => {
 })
 socket.on('proslediPotez', (options) => {
   document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"> <span>${options.username}</span><div style="font-size:20px"> ${options.figuraKojaSeKrece}${options.potez}</div>`);
+  document.getElementById('odigraniPotezi').scrollTop = 9999999;
 });
 socket.on('primiRokaduZaPrikazUIstorijiPoteza', (options) =>{
   const potez1 = listaPoteza[parseInt(options.x1) + parseInt(options.y1) * 8];
@@ -78,6 +80,7 @@ socket.on('primiRokaduZaPrikazUIstorijiPoteza', (options) =>{
   const img1 = document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML
   const img2 = document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML
   document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"><span> Rokada </span> <div style="font-size:20px"> ${img1}${potez1}</div> <div style="font-size:20px"> ${img2}${potez2}</div>`);
+  document.getElementById('odigraniPotezi').scrollTop = 9999999;
 });
     
 socket.on('primiVracenuFiguru', (options) => {
@@ -119,8 +122,8 @@ socket.on('prikaziPartiju',(options) => {
     </div>
     </div>`);
     if(document.querySelector('#myTurn').innerHTML === 'true'){
-    if(!intervalID)
-    intervalID = setInterval(timerCounter, 1000);
+    // if(!intervalID)
+    // intervalID = setInterval(timerCounter, 1000);
     }else{
       console.log('Nije moj red');
     }
@@ -174,8 +177,8 @@ socket.on('proslediPomeriFiguru',(options) =>{
     document.querySelector('#myTurn').innerHTML = false;
   }else{
     document.querySelector('#myTurn').innerHTML = true;
-    if(!intervalID)
-    intervalID = setInterval(timerCounter, 1000);
+    // if(!intervalID)
+    // intervalID = setInterval(timerCounter, 1000);
   }
 });
   function dozvoljeniPotezi(x, y){
