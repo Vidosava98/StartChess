@@ -93,12 +93,27 @@ socket.on('prikaziPartiju',(options) => {
     document.querySelector("#numbersOffigure").innerHTML = options.n;
     document.querySelector('#vreme').innerHTML = moment(options.d).format('D.M.YYYY HH:mm');
     document.querySelector('#idGame').innerHTML = options.id;
+    let bojaIgraca1 = null;
+    let bojaIgraca2 = null;
+    if(options.user1.color === "W"){
+      bojaIgraca1 = "Beli";
+    }else{
+      bojaIgraca1 = "Crni";
+    }
+    if(options.user2.color === "W"){
+      bojaIgraca2 = "Beli";
+    }else{
+      bojaIgraca2 = "Crni";
+    }
     $obaIgraca.insertAdjacentHTML('beforeend', `<div class="card" style="width:80%; background-color: #bbc8f0; margin:5%">
     <div class="card-body">
       <h5>Opis igrača</h5>
       <h5 class="card-title">${options.user1.name}</h5>
       <p class="card-text">${options.user1.email}</p>
-      <p class="card-text">${options.user1.color}</p>
+      <div style="display: flex; padding-left: 20px; padding-right: 20px;">
+      <div class="card-text" style="width: 80px;height: 30px;">${bojaIgraca1}</div>
+      <div id="bojaIgraca1" style="width: 30px;height: 30px;"></div>
+      </div>
        <div class="card-text">
          Datum prijave:  ${moment(options.user1.date).format('D.M.YYYY HH:mm')}
        </div> 
@@ -112,7 +127,10 @@ socket.on('prikaziPartiju',(options) => {
         <h5>Opis igrača</h5>
         <h5 class="card-title">${options.user2.name}</h5>
         <p class="card-text">${options.user2.email}</p>
-        <p class="card-text">${options.user2.color}</p>
+        <div style="display: flex; padding-left: 20px; padding-right: 20px;"> 
+        <div class="card-text" style="width: 80px;height: 30px;">${bojaIgraca2}</div>
+        <div id="bojaIgraca2" style="width: 30px;height: 30px;"></div>
+        </div>
         <div class="card-text">
         Datum prijave: ${moment(options.user2.date).format('D.M.YYYY HH:mm')}
         </div> 
@@ -121,6 +139,16 @@ socket.on('prikaziPartiju',(options) => {
         </div> 
     </div>
     </div>`);
+    if(options.user1.color === "W"){
+      document.querySelector('#bojaIgraca1').style.backgroundColor = "#ffffff";
+    }else{
+      document.querySelector('#bojaIgraca1').style.backgroundColor = "#000000";
+    }
+    if(options.user2.color === "W"){
+      document.querySelector('#bojaIgraca2').style.backgroundColor = "#ffffff";
+    }else{
+     document.querySelector('#bojaIgraca2').style.backgroundColor = "#000000";
+    }
     if(document.querySelector('#myTurn').innerHTML === 'true'){
     // if(!intervalID)
     // intervalID = setInterval(timerCounter, 1000);
@@ -301,6 +329,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
         {   
             document.querySelector("#result").innerHTML = "Pobeda je tvoja, čestitam!"
             krajJe = true;
+            const bojaIgraca = document.querySelector('#myColor').innerHTML;
+            const idGame = document.querySelector('#idGame').innerHTML;
+            socket.emit('krajJeUpdateGame',{idGame, bojaIgraca});
         }
       }
       } 

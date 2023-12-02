@@ -244,6 +244,17 @@ socket.on('posaljiRokaduZaPrikazUIstorijiPoteza',(options) =>
     invoker.pozoviKonkretnuKomandu();
     }
 });
+socket.on('krajJeUpdateGame', async (options) => {
+  const gameUpdate = await Game.findById({_id: options.idGame});
+  gameUpdate.kraj = true;
+  if(options.bojaIgraca === "W")
+ { gameUpdate.result ="Pobedio je beli igrac";}
+ else{
+  gameUpdate.result ="Pobedio je crni igrac";
+ }
+  const saveGame = await gameUpdate.save();
+  console.log(saveGame);
+});
 });
 server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});
 
