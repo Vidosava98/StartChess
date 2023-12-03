@@ -1,11 +1,15 @@
 // Command interface
 class Command {
     execute() {
-      throw new Error('execute() must be implemented');
+      throw new Error('execute() mora biti implementirna');
     }
   
     undo() {
-      throw new Error('undo() must be implemented');
+      throw new Error('undo() mora biti implementirana');
     }
   }
   module.exports = Command
+
+
+
+  

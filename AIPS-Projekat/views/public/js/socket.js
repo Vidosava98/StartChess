@@ -55,7 +55,9 @@ socket.on('info', (email2) => {
 });
 socket.on('message', (options) => {
   let vreme = moment(options.datumSlanjaPoruke).format('HH:mm:ss');
-  $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;"><span>${options.username}</span> <span>${vreme} </span> <p style="font-size:20px"> ${options.message}</p></div>`)
+  $messages.insertAdjacentHTML('beforeend',`<div class="message" style="margin-left:2%;">
+  <span>${options.username}</span> <span>${vreme} </span> 
+  <p style="font-size:20px"> ${options.message}</p></div>`)
   document.getElementById('messages').scrollTop = 9999999; 
 });
 socket.emit('join', { email: email, room : room.toString()}, (error) => {

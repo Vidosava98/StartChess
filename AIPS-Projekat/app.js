@@ -187,13 +187,10 @@ socket.on('disconnect', () => {
   chessTimer.stopTimer();
 });
 socket.on('sendMessage',(message, callback) => {
-  console.log('Stigla je poruka sledeceg sadrzaja: ' + message);
   const user = getUser(socket.id);
   const username = user.username;
   const te = Date.now();
-  console.log(te);
   const datumSlanjaPoruke = new Date(te);
-  console.log(datumSlanjaPoruke);
   io.to(user.room).emit('message',{message, username, datumSlanjaPoruke});
   callback();
 });
