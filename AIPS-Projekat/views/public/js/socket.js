@@ -194,12 +194,15 @@ document.querySelector("#chessboard").addEventListener("click", function (e) {
   }
 }});
 socket.on('proslediPomeriFiguru',(options) =>{
-  if(!options.rokada){
-  document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
-  document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
-  }else{
-    rokadaMove(options.x1 , options.y1, options.x2, options.y2);
-  }
+  if(!options.krajJe){
+    if(options.rokada){
+      rokadaMove(options.x1 , options.y1, options.x2, options.y2);
+     } else{
+      document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
+      document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
+     }  
+}
+  
   if(options.krajJe){
     document.querySelector("#result").innerHTML = "Protivnik je pobedio!";
     document.querySelector('#myTurn').innerHTML = false;
@@ -283,9 +286,12 @@ socket.on('proslediPomeriFiguru',(options) =>{
     if(Field)
     if(Field.children[0]){
     const pojedenaFigura = { html:Field.innerHTML, class:Field.children[0].getAttribute("class")};
+    const klasaDelovi = Field.children[0].getAttribute("class").split("_");
+    if(klasaDelovi[1].toString() !== "king"){
     listaPojedenihFigura.push(pojedenaFigura);
     const id = document.querySelector("#idGame").innerHTML;
     socket.emit('posaljiPojedenuFiguru', {pojedenaFigura, id});
+    }
     }
     //figura koja se krece sigurno postoji
     const fieldPrvi = document.querySelector('[data-x="'+ x1 +'"][data-y="' + y1 + '"]');
@@ -337,12 +343,14 @@ socket.on('proslediPomeriFiguru',(options) =>{
       } 
       socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
       returnFirstClickColor();
-      document.querySelector("#firstClick").innerHTML = "";
-      document.querySelector("#firstClick").setAttribute("id","");
-      if(tile.nodeName  === "DIV"){
-      tile.innerHTML = img;}
-      else{
-      tile.parentNode.innerHTML = img;}
+      if(!krajJe){
+        document.querySelector("#firstClick").innerHTML = "";
+        document.querySelector("#firstClick").setAttribute("id","");
+        if(tile.nodeName  === "DIV"){
+        tile.innerHTML = img;}
+        else{
+        tile.parentNode.innerHTML = img;}
+      }
       document.querySelector('#myTurn').innerHTML = false;
    } else{
     socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
