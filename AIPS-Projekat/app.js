@@ -95,7 +95,7 @@ var app = express();
 app.use(express.static(__dirname + "/views"));
 app.use(bodyParser.json());
 require("./config/passport")(passport);
-const { addUser, removeUser, getUser } = require('./utils/users')
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
 // Mongo
 const db = require("./config/keys").MongoURI;
 // Connect
@@ -132,10 +132,9 @@ app.use("/game",require("./routes/game"));
 app.use("/changes", require("./config/changes"));
 
 
-
+let listTimer = [];
 var server = http.createServer(app);
 const io = socketio(server);
-const chessTimer = new ChessTimer(0,0,0,0);
 io.on('connection',(socket) => {
   console.log("New webSocket connection");
   socket.on('join', async (options, callback) => {
@@ -143,7 +142,7 @@ io.on('connection',(socket) => {
     const userFromDatebase = await User.findOne({email:email});
     const username = userFromDatebase.name.toString();
 
-    const { error, user } = addUser({ id: socket.id, username: username, room:options.room });
+    const { error, user } = addUser({ id: socket.id, username: username, room:options.room, socket: socket });
 
     if (error) {
         return callback(error);
@@ -152,11 +151,18 @@ io.on('connection',(socket) => {
     socket.join(user.room);
     socket.broadcast.to(user.room).emit('info',`${email}`);
     socket.emit('ack', "Server je video da si stigao. Dobrodosao");
-    const playerScoreboard = new PlayerScoreboard(socket);
-    chessTimer.addTimerObserver(playerScoreboard);
     callback();
 });
 socket.on('doslaoba', async (options)=>{
+  const chessTimer = new ChessTimer(0,0,0,0);
+  listTimer.push(chessTimer);
+  const user = getUser(socket.id);
+  const users = getUsersInRoom(user.room);
+  users.forEach((user) => {
+    const playerScoreboard = new PlayerScoreboard(user.socket);
+    chessTimer.addTimerObserver(playerScoreboard);
+  });
+
   const user1 = await User.findOneAndUpdate({email: options.email1},{ color:'W'}, { new : true });
   const user2 = await User.findOneAndUpdate({email: options.email2},{ color:'B'}, { new : true });
 
@@ -178,13 +184,6 @@ socket.on('doslaoba', async (options)=>{
   user1: saveGame.igraci[0], user2: saveGame.igraci[1], id : saveGame._id
   });
   chessTimer.startTimer();
-});
-socket.on('disconnect', () => {
-  const user = removeUser(socket.id);
-  if (user) {
-      socket.broadcast.to(user.room).emit('ack', `${user.username} has left the game!`);
-  }
-  chessTimer.stopTimer();
 });
 socket.on('sendMessage',(message, callback) => {
   const user = getUser(socket.id);
@@ -211,17 +210,6 @@ socket.on('posaljiVracenuFiguru', (options) => {
   invoker.setCommand(command);
   if(user){
   invoker.pozoviKonkretnuKomandu();
-  }
-})
-socket.on('pomeriFiguru',(options) => {
-  const user = getUser(socket.id);
-  const command = new ProslediPomeriFiguruCommand(receiver, socket, user, options);
-  invoker.setCommand(command);
-  if(user){
-  invoker.pozoviKonkretnuKomandu(); 
-  }
-  if(options.krajJe){
-    chessTimer.stopTimer();
   }
 })
 socket.on('posaljiPotez',(options) => {
@@ -251,6 +239,44 @@ socket.on('krajJeUpdateGame', async (options) => {
  }
   const saveGame = await gameUpdate.save();
   console.log(saveGame);
+});
+socket.on('pomeriFiguru',(options) => {
+  const user = getUser(socket.id);
+  let chessTimer =  null;
+  listTimer.forEach(timer => {
+    timer.observers.forEach(observer => {
+      if(observer.socket === socket){
+        chessTimer = timer;
+        return;
+      }
+    });
+  });
+  const command = new ProslediPomeriFiguruCommand(receiver, socket, user, options);
+  invoker.setCommand(command);
+  if(user){
+  invoker.pozoviKonkretnuKomandu(); 
+  }
+  if(options.krajJe){
+    if(chessTimer)
+    chessTimer.stopTimer();
+  }
+})
+socket.on('disconnect', () => {
+  const user = removeUser(socket.id);
+  let chessTimer =  null;
+  listTimer.forEach(timer => {
+    timer.observers.forEach(observer => {
+      if(observer.socket === socket){
+        chessTimer = timer;
+        return;
+      }
+    });
+  });
+  if (user) {
+      socket.broadcast.to(user.room).emit('ack', `${user.username} has left the game!`);
+  }
+  if(chessTimer)
+  chessTimer.stopTimer();
 });
 });
 server.listen(3000,() =>{console.log('Aplikacija osluskuje na portu:' + 3000);});

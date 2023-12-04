@@ -4,10 +4,7 @@ let s, m, h;
 s = m = h = 0;
 const listaSlova = ['A','B','C','D','E','F','G','H'];
 let listaPoteza = [];
-for(let i = 8; i >= 1; i-- )
-for(let j = 1; j <= 8; j++ )
-{ listaPoteza.push(i + listaSlova[j-1]); }
-console.log(listaPoteza);
+listaPotezaPopuni();
 export let listaDozvoljenihPoteza = [];
 let listaPojedenihFigura = [];
 let listaMojihPojedenihFigura = [];
@@ -570,4 +567,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
       });
     } 
    }
+  }
+  function listaPotezaPopuni(){
+    for(let i = 8; i >= 1; i-- )
+      for(let j = 1; j <= 8; j++ )
+      { listaPoteza.push(i + listaSlova[j-1]); }
   }
