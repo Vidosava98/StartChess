@@ -60,20 +60,22 @@
             </div>
           </nav>
         <div class = "center" style = "margin-left: 15%; margin-top:3.5%;">
-            <div class="card" style="background-color: #bbc8f0; margin-top: 3%; margin-left: 1.5%; margin-right: 19.9%; flex-direction: row;">
+            <div class="card" style="background-color: #bbc8f0; margin-top: 3%; margin-left: 1.5%; margin-right: 11%; flex-direction: row;">
                 <div style="margin: 1%;"><label>Room </label><div id ="room"><%=room%></div></div>
                 <div style="margin: 1%;"><label>Moj email: </label><div id ="email"><%=email%></div></div>
                 <div style="margin: 1%;"><label>Broj figura na tabli: </label><div id ="numbersOffigure"></div></div>
                 <div style="margin: 1%;"><label>Rezultat: </label><div id ="result" style="color:#c41515"><%=game.result%></div></div>
                 <div style="margin: 1%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
                 <div style="margin: 1%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
+                <button style="margin: 2%;" id="idOdustani" class="btn-primary">Odustani</button>              
                 <div class="col">
                   <div style="margin: 1%; color:#c94646;" hidden="true" id="idSah">Protivnik ti je napravio šah!</div>
                   <div style="margin: 1%; color:#c94646;" hidden="true" id="idSeh">Protivnik ti je napravio šeh!</div>
                   <div style="margin: 1%; color:#c94646;" hidden="true" id="idSuh">Protivnik ti je napravio šuh!</div>
                 </div>
                 <!-- <div style="margin: 1%;"><div>Vreme trajanja mog poteza:</div><div id="idTimerCounter">00:00:00</div></div> -->
-            </div>  
+            </div> 
+    
             <div class="row" style = "padding-top: 20px;">
               <div id="obaIgraca">
           

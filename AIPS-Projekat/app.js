@@ -153,6 +153,12 @@ io.on('connection',(socket) => {
     socket.emit('ack', "Server je video da si stigao. Dobrodosao");
     callback();
 });
+socket.on('proslediSahMat', sahMat =>{
+  const user = getUser(socket.id);
+  console.log(sahMat);
+  if(user)
+  socket.broadcast.to(user.room).emit('primiSahMat', sahMat);
+})
 socket.on('doslaoba', async (options)=>{
   const chessTimer = new ChessTimer(0,0,0,0);
   listTimer.push(chessTimer);

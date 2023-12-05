@@ -81,7 +81,15 @@ socket.on('primiRokaduZaPrikazUIstorijiPoteza', (options) =>{
   document.querySelector("#odigraniPotezi").insertAdjacentHTML('beforeend',`<div class="potez" style="margin-left:2%;"><span> Rokada </span> <div style="font-size:20px"> ${img1}${potez1}</div> <div style="font-size:20px"> ${img2}${potez2}</div>`);
   document.getElementById('odigraniPotezi').scrollTop = 9999999;
 });
-    
+socket.on('primiSahMat', (sahMat) => {
+  document.getElementById("idSah").hidden = false;
+  document.getElementById("idSah").innerHTML = sahMat;
+  console.log("primiSahMat");
+  document.querySelector("#idOdustani").setAttribute('disabled', 'disabled');
+  document.querySelector("#result").innerHTML = "Pobeda je tvoja, čestitam!"
+  const krajJe = true;
+  socket.emit('pomeriFiguru',{x1:0, y1:0, x2:0, y2:0, img:null, krajJe, rokada:null});
+})   
 socket.on('primiVracenuFiguru', (options) => {
   console.log(options.x2, options.y2, options.html);
   document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.html;
@@ -174,6 +182,13 @@ $messageForm.addEventListener('submit', (e) => {
       console.log('Message delivered!');
   });
 });
+document.querySelector("#idOdustani").addEventListener("click", function (e) {
+  console.log("Odustao si");
+  document.querySelector("#idOdustani").setAttribute('disabled', 'disabled');
+  socket.emit('proslediSahMat',"Protivnik je predao meč!");
+  document.getElementById("idSah").hidden = false;
+  document.getElementById("idSah").innerHTML = "Odustao si!";
+});
 document.querySelector("#chessboard").addEventListener("click", function (e) {
   var tile = e.target;
   if(document.querySelector('#myTurn').innerHTML === 'true'){
@@ -208,6 +223,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
   if(options.krajJe){
     document.querySelector("#result").innerHTML = "Protivnik je pobedio!";
     document.querySelector('#myTurn').innerHTML = false;
+    document.querySelector("#idOdustani").setAttribute('disabled', 'disabled');
   }else{
     document.querySelector('#myTurn').innerHTML = true;
     // if(!intervalID)
@@ -341,6 +357,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
             const bojaIgraca = document.querySelector('#myColor').innerHTML;
             const idGame = document.querySelector('#idGame').innerHTML;
             socket.emit('krajJeUpdateGame',{idGame, bojaIgraca});
+            document.querySelector("#idOdustani").setAttribute('disabled', 'disabled');
         }
       }
       } 
@@ -355,9 +372,10 @@ socket.on('proslediPomeriFiguru',(options) =>{
         tile.parentNode.innerHTML = img;}
       }
       document.querySelector('#myTurn').innerHTML = false;
-      document.getElementById("idSah").hidden = true;
       document.getElementById("idSeh").hidden = true;
       document.getElementById("idSuh").hidden = true;
+      document.getElementById("idSah").hidden = true;
+      proveraSahMat();  
    } else{
     socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
     rokadaMove(x1, y1, x2, y2);
@@ -595,7 +613,30 @@ socket.on('proslediPomeriFiguru',(options) =>{
      removeRedField();
     listaDozvoljenihPoteza.forEach(element => {
       if(element.x.toString() === xKralj.toString() && element.y.toString() === yKralj.toString()){
+      document.getElementById("idSah").hidden = false;
+      }
+    });
+    }
+  }
+  function proveraSahMat(){
+    const koord = nadjiKralja();
+    if(koord){
+    const xKralj = koord['x'];
+    const yKralj = koord['y'];
+    listaDozvoljenihPoteza = [];
+    let listKordProtivnikovihFigura = [];
+    listKordProtivnikovihFigura = kordProtivnikovihFigura();
+    listKordProtivnikovihFigura.forEach(element => {
+      dozvoljeniPotezi(element.x, element.y);
+     });
+     removeGreenField();
+     removeRedField();
+    listaDozvoljenihPoteza.forEach(element => {
+      if(element.x.toString() === xKralj.toString() && element.y.toString() === yKralj.toString()){
+        console.log("Matiran si");
+        socket.emit('proslediSahMat',"Matirao si protivnika");
         document.getElementById("idSah").hidden = false;
+        document.getElementById("idSah").innerHTML = "Matiran si!";
       }
     });
     }
