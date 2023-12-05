@@ -200,6 +200,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
       document.querySelector('[data-x="'+ options.x1 +'"][data-y="' + options.y1 + '"]').innerHTML = '';
       document.querySelector('[data-x="'+ options.x2 +'"][data-y="' + options.y2 + '"]').innerHTML = options.img;
      }  
+     proveraSah();
+     proveraSeh();
+     proveraSuh();
 }
   
   if(options.krajJe){
@@ -214,6 +217,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
   function dozvoljeniPotezi(x, y){
     const klasaSlike = document.querySelector('[data-x="'+ x +'"][data-y="' + y + '"]').children[0].getAttribute("class"); 
     let elementiSlikeFigure = klasaSlike.split("_");
+    let listaZaVratiti = [];
     switch(elementiSlikeFigure[1].toString()) {
       case "pawn":
         chessPieceContext.setStrategy(pawnStrategy);
@@ -351,6 +355,9 @@ socket.on('proslediPomeriFiguru',(options) =>{
         tile.parentNode.innerHTML = img;}
       }
       document.querySelector('#myTurn').innerHTML = false;
+      document.getElementById("idSah").hidden = true;
+      document.getElementById("idSeh").hidden = true;
+      document.getElementById("idSuh").hidden = true;
    } else{
     socket.emit('pomeriFiguru',{x1, y1, x2, y2, img, krajJe, rokada});
     rokadaMove(x1, y1, x2, y2);
@@ -572,4 +579,136 @@ socket.on('proslediPomeriFiguru',(options) =>{
     for(let i = 8; i >= 1; i-- )
       for(let j = 1; j <= 8; j++ )
       { listaPoteza.push(i + listaSlova[j-1]); }
+  }
+  function proveraSah(){
+    const koord = nadjiKralja();
+    const xKralj = koord['x'];
+    const yKralj = koord['y'];
+    listaDozvoljenihPoteza = [];
+    let listKordProtivnikovihFigura = [];
+    listKordProtivnikovihFigura = kordProtivnikovihFigura();
+    listKordProtivnikovihFigura.forEach(element => {
+      dozvoljeniPotezi(element.x, element.y);
+     });
+     removeGreenField();
+     removeRedField();
+    listaDozvoljenihPoteza.forEach(element => {
+      if(element.x.toString() === xKralj.toString() && element.y.toString() === yKralj.toString()){
+        document.getElementById("idSah").hidden = false;
+      }
+    });
+  }
+  function proveraSeh(){
+    const koord = nadjiKraljicu();
+    const xKraljica = koord['x'];
+    const yKraljica = koord['y'];
+    listaDozvoljenihPoteza = [];
+    let listKordProtivnikovihFigura = [];
+    listKordProtivnikovihFigura = kordProtivnikovihFigura();
+    listKordProtivnikovihFigura.forEach(element => {
+      dozvoljeniPotezi(element.x, element.y);
+     });
+     removeGreenField();
+     removeRedField();
+    listaDozvoljenihPoteza.forEach(element => {
+      if(element.x.toString() === xKraljica.toString() && element.y.toString() === yKraljica.toString()){
+        document.getElementById("idSeh").hidden = false;
+      }
+    });
+  }
+  function proveraSuh(){
+    const koord = nadjiTopove();
+    koord.forEach(element => {
+      const xTop = element['x'];
+      const yTop = element['y']; 
+      listaDozvoljenihPoteza = [];
+      let listKordProtivnikovihFigura = [];
+      listKordProtivnikovihFigura = kordProtivnikovihFigura();
+      listKordProtivnikovihFigura.forEach(element => {
+        dozvoljeniPotezi(element.x, element.y);
+       });
+       removeGreenField();
+       removeRedField();
+      listaDozvoljenihPoteza.forEach(element => {
+        if(element.x.toString() === xTop.toString() && element.y.toString() === yTop.toString()){
+          document.getElementById("idSuh").hidden = false;
+        }
+      });
+    });
+  }
+  function nadjiKralja(){
+    for(let i=0; i < 8; i++)
+    for(let j=0; j < 8; j++)
+     {
+       const field = document.querySelector('[data-x="'+ i +'"][data-y="' + j + '"]');
+       if(field)
+         if(field.children[0]){
+        const klasaFigure = field.children[0].getAttribute("class").split("_");
+        const boja = document.querySelector("#myColor").innerHTML;
+        if(klasaFigure[1] === "king" && klasaFigure[0].toLowerCase() === boja.toLowerCase())
+        {
+          const x = i;
+          const y = j;
+          return {x:x, y:y};
+        }
+       }
+     }
+  }
+  function nadjiKraljicu(){
+    for(let i=0; i < 8; i++)
+    for(let j=0; j < 8; j++)
+     {
+       const field = document.querySelector('[data-x="'+ i +'"][data-y="' + j + '"]');
+       if(field)
+         if(field.children[0]){
+        const klasaFigure = field.children[0].getAttribute("class").split("_");
+        const boja = document.querySelector("#myColor").innerHTML;
+        if(klasaFigure[1] === "queen" && klasaFigure[0].toLowerCase() === boja.toLowerCase())
+        {
+          const x = i;
+          const y = j;
+          return {x:x, y:y};
+        }
+       }
+     }
+  }
+  function nadjiTopove(){
+    let listaTopova = [];
+    for(let i=0; i < 8; i++)
+    for(let j=0; j < 8; j++)
+     {
+       const field = document.querySelector('[data-x="'+ i +'"][data-y="' + j + '"]');
+       if(field)
+         if(field.children[0]){
+        const klasaFigure = field.children[0].getAttribute("class").split("_");
+        const boja = document.querySelector("#myColor").innerHTML;
+        if(klasaFigure[1] === "rook" && klasaFigure[0].toLowerCase() === boja.toLowerCase())
+        {
+          const x = i;
+          const y = j;
+          listaTopova.push({x, y});
+        }
+       }
+     }
+     return listaTopova;
+  }
+  function kordProtivnikovihFigura(){
+    let lista = [];
+    for(let i=0; i < 8; i++)
+    for(let j=0; j < 8; j++)
+     {
+       const field = document.querySelector('[data-x="'+ i +'"][data-y="' + j + '"]');
+       if(field)
+         if(field.children[0]){
+        const klasaFigure = field.children[0].getAttribute("class").split("_");
+        const boja = document.querySelector("#myColor").innerHTML;
+        if(klasaFigure[0].toLowerCase() !== boja.toLowerCase())
+        {
+          const x = i;
+          const y = j;
+          lista.push({x:x, y:y});
+        }
+       }
+     }
+     return lista;
   }
