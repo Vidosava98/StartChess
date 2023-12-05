@@ -582,6 +582,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
   }
   function proveraSah(){
     const koord = nadjiKralja();
+    if(koord){
     const xKralj = koord['x'];
     const yKralj = koord['y'];
     listaDozvoljenihPoteza = [];
@@ -597,30 +598,13 @@ socket.on('proslediPomeriFiguru',(options) =>{
         document.getElementById("idSah").hidden = false;
       }
     });
+    }
   }
   function proveraSeh(){
     const koord = nadjiKraljicu();
-    const xKraljica = koord['x'];
-    const yKraljica = koord['y'];
-    listaDozvoljenihPoteza = [];
-    let listKordProtivnikovihFigura = [];
-    listKordProtivnikovihFigura = kordProtivnikovihFigura();
-    listKordProtivnikovihFigura.forEach(element => {
-      dozvoljeniPotezi(element.x, element.y);
-     });
-     removeGreenField();
-     removeRedField();
-    listaDozvoljenihPoteza.forEach(element => {
-      if(element.x.toString() === xKraljica.toString() && element.y.toString() === yKraljica.toString()){
-        document.getElementById("idSeh").hidden = false;
-      }
-    });
-  }
-  function proveraSuh(){
-    const koord = nadjiTopove();
-    koord.forEach(element => {
-      const xTop = element['x'];
-      const yTop = element['y']; 
+    if(koord){
+      const xKraljica = koord['x'];
+      const yKraljica = koord['y'];
       listaDozvoljenihPoteza = [];
       let listKordProtivnikovihFigura = [];
       listKordProtivnikovihFigura = kordProtivnikovihFigura();
@@ -630,11 +614,33 @@ socket.on('proslediPomeriFiguru',(options) =>{
        removeGreenField();
        removeRedField();
       listaDozvoljenihPoteza.forEach(element => {
-        if(element.x.toString() === xTop.toString() && element.y.toString() === yTop.toString()){
-          document.getElementById("idSuh").hidden = false;
+        if(element.x.toString() === xKraljica.toString() && element.y.toString() === yKraljica.toString()){
+          document.getElementById("idSeh").hidden = false;
         }
       });
-    });
+    }
+  }
+  function proveraSuh(){
+    const koord = nadjiTopove();
+    if(koord){
+      koord.forEach(element => {
+        const xTop = element['x'];
+        const yTop = element['y']; 
+        listaDozvoljenihPoteza = [];
+        let listKordProtivnikovihFigura = [];
+        listKordProtivnikovihFigura = kordProtivnikovihFigura();
+        listKordProtivnikovihFigura.forEach(element => {
+          dozvoljeniPotezi(element.x, element.y);
+         });
+         removeGreenField();
+         removeRedField();
+        listaDozvoljenihPoteza.forEach(element => {
+          if(element.x.toString() === xTop.toString() && element.y.toString() === yTop.toString()){
+            document.getElementById("idSuh").hidden = false;
+          }
+        });
+      });
+    }
   }
   function nadjiKralja(){
     for(let i=0; i < 8; i++)
