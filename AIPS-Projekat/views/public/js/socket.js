@@ -89,6 +89,7 @@ socket.on('primiSahMat', (sahMat) => {
   document.querySelector("#result").innerHTML = "Pobeda je tvoja, čestitam!"
   const krajJe = true;
   socket.emit('pomeriFiguru',{x1:0, y1:0, x2:0, y2:0, img:null, krajJe, rokada:null});
+  document.querySelector('#myTurn').innerHTML = false;
 })   
 socket.on('primiVracenuFiguru', (options) => {
   console.log(options.x2, options.y2, options.html);
@@ -188,6 +189,7 @@ document.querySelector("#idOdustani").addEventListener("click", function (e) {
   socket.emit('proslediSahMat',"Protivnik je predao meč!");
   document.getElementById("idSah").hidden = false;
   document.getElementById("idSah").innerHTML = "Odustao si!";
+  document.querySelector('#myTurn').innerHTML = false;
 });
 document.querySelector("#chessboard").addEventListener("click", function (e) {
   var tile = e.target;
@@ -637,6 +639,7 @@ socket.on('proslediPomeriFiguru',(options) =>{
         socket.emit('proslediSahMat',"Matirao si protivnika");
         document.getElementById("idSah").hidden = false;
         document.getElementById("idSah").innerHTML = "Matiran si!";
+        document.querySelector('#myTurn').innerHTML = false;
       }
     });
     }
