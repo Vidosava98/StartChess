@@ -178,6 +178,7 @@ socket.on('doslaoba', async (options)=>{
 
   newGame.igraci.push(user1);
   newGame.igraci.push(user2);
+  newGame.datumKreiranjaIgre = Date.now();
   const saveGame = await newGame.save();
 
     //update users lastConnection
