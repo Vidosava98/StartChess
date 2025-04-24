@@ -45,19 +45,23 @@
       </div>
     </nav>
     <div class="glavniDivProfila">
-      <div class="" style="width:40%; background-color:#bbc8f0">
+      <div class="card-profile" style="background-color: #bbc8f0">
         <div class="card-body">
           <%- include('./partials/messages.ejs') %>
           <h5 class="card-title"><%=name%></h5>
-          <p class="card-text"><%=email%></p>          
-          <img style="width:40%;height:40%;" src ="data:image/jpeg;base64,<%=avatar%>">
+          <p class="card-text"><%=email%></p>
+          <img
+            style="width: 40%; height: 40%"
+            src="data:image/jpeg;base64,<%=avatar%>"
+          />
           <div class="card-text">
-            Datum prijave: <%= date.getDate() %>.<%= date.getMonth()%>.<%=date.getFullYear()%>.
+            Datum prijave: <%= date.getDate() %>.<%=
+            date.getMonth()%>.<%=date.getFullYear()%>.
           </div>
           <div class="card-text">
-            Poslednja odigrana partija: <%= lastConnection.getDate() %>.<%= lastConnection.getMonth()%>.<%=lastConnection.getFullYear()%>.
+            Poslednja odigrana partija: <%= lastConnection.getDate() %>.<%=
+            lastConnection.getMonth()%>.<%=lastConnection.getFullYear()%>.
           </div>
-          <p></p>
           <a href="#" id="myRef1" class="card-link">Promeni šifru</a>
           <p></p>
           <a href="#" id="myRef2" class="card-link">Promeni ime</a>
@@ -68,7 +72,6 @@
         </div>
       </div>
     </div>
-
     <script>
       var $row1 = $("#row1");
       $("#myRef2").click(function () {
@@ -81,8 +84,8 @@
       });
 
       var $row1 = $("#row1");
-      $("#myRef3").click(function(){
-        $row1.load("/changes/_form_profileimage")
+      $("#myRef3").click(function () {
+        $row1.load("/changes/_form_profileimage");
       });
     </script>
   </body>
