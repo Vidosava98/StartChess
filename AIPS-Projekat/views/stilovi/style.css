@@ -1,5 +1,12 @@
+@font-face {
+  font-family: "MyFont";
+  src: url("Resource/Font/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 * {
   box-sizing: border-box;
+  font-family: "MyFont";
 }
 body {
   font-family: Verdana, sans-serif;
@@ -63,14 +70,14 @@ img {
 
 .card {
   margin-top: 2%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   font-size: 20px;
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 .red2 {
   display: flex;
@@ -129,17 +136,22 @@ img {
 .card-titlee {
   color: white;
   font-size: 50px;
-}
-
-.korisnici {
-  padding-top: 70px;
-}
-
-.card-title {
   padding: 10px;
-  font-size: 50px;
 }
-
+.korisnici {
+  padding: 5em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.korisnik {
+  background-color: #d6ccff;
+  min-width: 20em;
+  text-align: center;
+  margin: 0.6em;
+  padding: 2.3em 0.7em 0.7em 0.7em;
+  box-shadow: 0.08em 0px 0.8em black;
+}
 .whole {
   display: flex;
   justify-content: center;
@@ -234,39 +246,38 @@ img {
   animation-name: fade;
   animation-duration: 1.5s;
 }
-.chessboard{
-	width: 800px;
-	height: 800px;
-	border: 2px #bbc8f0 solid;
-	float: left;
+.chessboard {
+  width: 800px;
+  height: 800px;
+  border: 2px #bbc8f0 solid;
+  float: left;
 }
-.chessboard div{
-	width: 12.5%;
-	height: 12.5%;
-	float: left;
-
+.chessboard div {
+  width: 12.5%;
+  height: 12.5%;
+  float: left;
 }
-.chessboard div img{
-	width: 100%;
-	height: 100%;
+.chessboard div img {
+  width: 100%;
+  height: 100%;
 }
-.chessboard div p{
-	position: absolute;
+.chessboard div p {
+  position: absolute;
 }
-.chessboard div.B{
-	background-color: #bbc8f0;
+.chessboard div.B {
+  background-color: #bbc8f0;
 }
-.chessboard div.W{
-	background-color: #FFF;
+.chessboard div.W {
+  background-color: #fff;
 }
-.chessboard div#colorGreen{
-	background-color: green;
+.chessboard div#colorGreen {
+  background-color: green;
 }
-.chessboard div#colorRed{
-	background-color: red;
+.chessboard div#colorRed {
+  background-color: red;
 }
-.chessboard div.selected{
-	background-color: yellow;
+.chessboard div.selected {
+  background-color: yellow;
 }
 
 @-webkit-keyframes fade {
