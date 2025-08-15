@@ -1,197 +1,362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
     <head>
-        <head>
-            <!-- Required meta tags -->
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
+      <!-- Required meta tags -->
+      <meta charset="utf-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      />
 
+      <!-- Bootstrap CSS -->
+      <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous"
+      />
+      <link rel="stylesheet" href="../stilovi/style.css" />
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin=""
+      />
+      <script
+        src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""
+      ></script>
+      <script
+        src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+        type="text/javascript"
+      ></script>
 
-            <!-- Bootstrap CSS -->
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-            <link rel="stylesheet" href="../stilovi/style.css">
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-            crossorigin=""/>
-            <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-            crossorigin=""></script>
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-          
-            <style type="text/css">
-                i
-                { 
-                  color: rgb(221, 43, 43) 
-                  
-                }
-                #isMap
-                {
-                  height: 350px;
-                  width: 100%;
-                }
-            </style>
-        
-          </head>
+      <style type="text/css">
+        i {
+          color: rgb(221, 43, 43);
+        }
+        #isMap {
+          height: 350px;
+          width: 100%;
+        }
+      </style>
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-      
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                  <a class="nav-link" href="/dashboard">Startna stranica</a>
-                </li>
-              </ul>
-              <form class="form-inline my-2 my-lg-0">
-                <a href="/users/logout" class="btn btn-secondary">Odjavi se</a>
-              </form>
-            </div>
-          </nav>
-        <div class = "center" style = "margin-left: 15%; margin-top:3.5%;">
-            <div class="card" style="background-color: #bbc8f0; margin-top: 3%; margin-left: 1.5%; margin-right: 11%; flex-direction: row;">
-                <div style="margin: 1%;"><label>Room </label><div id ="room"><%=room%></div></div>
-                <div style="margin: 1%;"><label>Moj email: </label><div id ="email"><%=email%></div></div>
-                <div style="margin: 1%;"><label>Broj figura na tabli: </label><div id ="numbersOffigure"></div></div>
-                <div style="margin: 1%;"><label>Rezultat: </label><div id ="result" style="color:#c41515"><%=game.result%></div></div>
-                <div style="margin: 1%;"><label>Vreme kada je partija zapoceta: </label><div id ="vreme"><%=vreme%></div></div>
-                <div style="margin: 1%;"><div>Vreme trajanja igre:</div><div id="idCountDown"></div></div>
-                <button style="margin: 2%;" id="idOdustani" class="btn-primary">Odustani</button>              
-                <div class="col">
-                  <div style="margin: 1%; color:#c94646;" hidden="true" id="idSah">Protivnik ti je napravio šah!</div>
-                  <div style="margin: 1%; color:#c94646;" hidden="true" id="idSeh">Protivnik ti je napravio šeh!</div>
-                  <div style="margin: 1%; color:#c94646;" hidden="true" id="idSuh">Protivnik ti je napravio šuh!</div>
-                </div>
-                <!-- <div style="margin: 1%;"><div>Vreme trajanja mog poteza:</div><div id="idTimerCounter">00:00:00</div></div> -->
-            </div> 
-    
-            <div class="row" style = "padding-top: 20px;">
-              <div id="obaIgraca">
-          
-              </div>
-              <div id="divChess">
-              <div class="col">
-                <div class="row">
-                  <div style="background-color:white;width:5%;font-size: 25px;" class="col">
-                    <div style="width:12.5%; height: 12.5%;">8</div>
-                     <div style="width:12.5%; height: 12.5%;">7</div>
-                     <div style="width:12.5%; height: 12.5%;">6</div>
-                     <div style="width:12.5%; height: 12.5%;">5</div>
-                     <div style="width:12.5%; height: 12.5%;">4</div>
-                     <div style="width:12.5%; height: 12.5%;">3</div>
-                     <div style="width:12.5%; height: 12.5%;">2</div>
-                     <div style="width:12.5%; height: 12.5%;">1</div>
-                  </div>
-                  <div class="chessboard" id="chessboard">
-                  <div class=" W" data-x="0" data-y="0"><img id ="B" class = "B_rook" src="images/B_rook.png"></div>
-                  <div class=" B" data-x="1" data-y="0"><img id ="B" class = "B_knight" src="images/B_knight.png"></div>
-                  <div class=" W" data-x="2" data-y="0"><img id ="B" class = "B_bishop" src="images/B_bishop.png"></div>
-                  <div class=" B" data-x="3" data-y="0"><img id ="B" class = "B_queen" src="images/B_queen.png"></div>
-                  <div class=" W" data-x="4" data-y="0"><img id ="B" class = "B_king" src="images/B_king.png"></div>
-                  <div class=" B" data-x="5" data-y="0"><img id ="B" class = "B_bishop" src="images/B_bishop.png"></div>
-                  <div class=" W" data-x="6" data-y="0"><img id ="B" class = "B_knight" src="images/B_knight.png"></div>
-                  <div class=" B" data-x="7" data-y="0"><img id ="B" class = "B_rook" src="images/B_rook.png"></div>
-                  <div class=" B" data-x="0" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" W" data-x="1" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" B" data-x="2" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" W" data-x="3" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" B" data-x="4" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" W" data-x="5" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" B" data-x="6" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" W" data-x="7" data-y="1"><img id ="B" class = "B_pawn" src="images/B_pawn.png"></div>
-                  <div class=" W" data-x="0" data-y="2"></div>
-                  <div class=" B" data-x="1" data-y="2"></div>
-                  <div class=" W" data-x="2" data-y="2"></div>
-                  <div class=" B" data-x="3" data-y="2"></div>
-                  <div class=" W" data-x="4" data-y="2"></div>
-                  <div class=" B" data-x="5" data-y="2"></div>
-                  <div class=" W" data-x="6" data-y="2"></div>
-                  <div class=" B" data-x="7" data-y="2"></div>
-                  <div class=" B" data-x="0" data-y="3"></div>
-                  <div class=" W" data-x="1" data-y="3"></div>
-                  <div class=" B" data-x="2" data-y="3"></div>
-                  <div class=" W" data-x="3" data-y="3"></div>
-                  <div class=" B" data-x="4" data-y="3"></div>
-                  <div class=" W" data-x="5" data-y="3"></div>
-                  <div class=" B" data-x="6" data-y="3"></div>
-                  <div class=" W" data-x="7" data-y="3"></div>
-                  <div class=" W" data-x="0" data-y="4"></div>
-                  <div class=" B" data-x="1" data-y="4"></div>
-                  <div class=" W" data-x="2" data-y="4"></div>
-                  <div class=" B" data-x="3" data-y="4"></div>
-                  <div class=" W" data-x="4" data-y="4"></div>
-                  <div class=" B" data-x="5" data-y="4"></div>
-                  <div class=" W" data-x="6" data-y="4"></div>
-                  <div class=" B" data-x="7" data-y="4"></div>
-                  <div class=" B" data-x="0" data-y="5"></div>
-                  <div class=" W" data-x="1" data-y="5"></div>
-                  <div class=" B" data-x="2" data-y="5"></div>
-                  <div class=" W" data-x="3" data-y="5"></div>
-                  <div class=" B" data-x="4" data-y="5"></div>
-                  <div class=" W" data-x="5" data-y="5"></div>
-                  <div class=" B" data-x="6" data-y="5"></div>
-                  <div class=" W" data-x="7" data-y="5"></div>
-                  <div class=" W" data-x="0" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" B" data-x="1" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" W" data-x="2" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" B" data-x="3" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" W" data-x="4" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" B" data-x="5" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" W" data-x="6" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" B" data-x="7" data-y="6"><img id ="W" class = "W_pawn" src="images/W_pawn.png"></div>
-                  <div class=" B" data-x="0" data-y="7"><img id ="W" class = "W_rook" src="images/W_rook.png"></div>
-                  <div class=" W" data-x="1" data-y="7"><img id ="W" class = "W_knight" src="images/W_knight.png"></div>
-                  <div class=" B" data-x="2" data-y="7"><img id ="W" class = "W_bishop" src="images/W_bishop.png"></div>
-                  <div class=" W" data-x="3" data-y="7"><img id ="W" class = "W_queen" src="images/W_queen.png"></div>
-                  <div class=" B" data-x="4" data-y="7"><img id ="W" class = "W_king" src="images/W_king.png"></div>
-                  <div class=" W" data-x="5" data-y="7"><img id ="W" class = "W_bishop" src="images/W_bishop.png"></div>
-                  <div class=" B" data-x="6" data-y="7"><img id ="W" class = "W_knight" src="images/W_knight.png"></div>
-                  <div class=" W" data-x="7" data-y="7"><img id ="W" class = "W_rook" src="images/W_rook.png"></div>
-                  </div>
-                </div>
-                <div style="background-color: white;width:100%;font-size:25px;margin-top: -5%;text-align: right;" class="row">
-                  <div style="width:12.5%; height: 12.5%;">A</div>
-                   <div style="width:12.5%; height: 12.5%;">B</div>
-                   <div style="width:12.5%; height: 12.5%;">C</div>
-                   <div style="width:12.5%; height: 12.5%;">D</div>
-                   <div style="width:12.5%; height: 12.5%;">E</div>
-                   <div style="width:12.5%; height: 12.5%;">F</div>
-                   <div style="width:12.5%; height: 12.5%;">G</div>
-                   <div style="width:12.5%; height: 12.5%;">H</div>
-                </div>
-              </div>
-              </div>
-              <form id="poruke-forma">
-              <div style="width: 100%; height: 85%; max-height: 800px; max-width:400px; background-color: #ffffffc7; margin-top: 15%; margin-left:2%; overflow:scroll;" id="messages">           
-              </div>
-              <div style="width:90%; margin-left:5%; margin-right:5%;">
-              <input name="message" class="form-control" placeholder="Unesi poruku..." required autocomplete="off" id="inputMessage">
-              <button type="submit" class="btn btn-primary" id="messageFormButton" style="margin-top: 2%; margin-left:48%;">Pošalji poruku      
-              </button>
-              </div>
-              </form>
-              <div style="width: 10%; height: 85%; max-height: 660px; max-width:400px; background-color: #ffffffc7; margin-left: 5%; margin-top: 5%; overflow:scroll;" id="odigraniPotezi">           
-              </div>
-            </div>
-            <div style="visibility:hidden;"><div></div><div id="myTurn">false</div></div>
-            <div style="visibility:hidden;"><div></div><div id="myColor">B</div></div>
-            <div style="visibility:hidden;"><div></div><div id="firstMove">true</div></div>
-            <div style="visibility:hidden;"><div></div><div id="idGame"></div></div>
-        </div>
-           <script src="/socket.io/socket.io.js"></script>
-           <script  type="module" src="./public/js/socket.js"></script>
-           <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    </body>
-</html>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">HomePage</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <a href="/users/logout" class="btn btn-secondary">Odjavi se</a>
+        </form>
+      </div>
+    </nav>
+    <div class="center" style="margin-left: 15%; margin-top: 3.5%">
+      <div
+        class="card"
+        style="
+          background-color: #bbc8f0;
+          margin-top: 3%;
+          margin-left: 1.5%;
+          margin-right: 11%;
+          flex-direction: row;
+        "
+      >
+        <div style="margin: 1%">
+          <label>Room </label>
+          <div id="room"><%=room%></div>
+        </div>
+        <div style="margin: 1%">
+          <label>Moj email: </label>
+          <div id="email"><%=email%></div>
+        </div>
+        <div style="margin: 1%">
+          <label>Broj figura na tabli: </label>
+          <div id="numbersOffigure"></div>
+        </div>
+        <div style="margin: 1%">
+          <label>Rezultat: </label>
+          <div id="result" style="color: #c41515"><%=game.result%></div>
+        </div>
+        <div style="margin: 1%">
+          <label>Vreme kada je partija zapoceta: </label>
+          <div id="vreme"><%=vreme%></div>
+        </div>
+        <div style="margin: 1%">
+          <div>Vreme trajanja igre:</div>
+          <div id="idCountDown"></div>
+        </div>
+        <button style="margin: 2%" id="idOdustani" class="btn-primary">
+          Odustani
+        </button>
+        <div class="col">
+          <div style="margin: 1%; color: #c94646" hidden="true" id="idSah">
+            Protivnik ti je napravio šah!
+          </div>
+          <div style="margin: 1%; color: #c94646" hidden="true" id="idSeh">
+            Protivnik ti je napravio šeh!
+          </div>
+          <div style="margin: 1%; color: #c94646" hidden="true" id="idSuh">
+            Protivnik ti je napravio šuh!
+          </div>
+        </div>
+        <!-- <div style="margin: 1%;"><div>Vreme trajanja mog poteza:</div><div id="idTimerCounter">00:00:00</div></div> -->
+      </div>
+
+      <div class="row" style="padding-top: 20px">
+        <div id="obaIgraca"></div>
+        <div id="divChess">
+          <div class="col">
+            <div class="row">
+              <div
+                style="background-color: white; width: 5%; font-size: 25px"
+                class="col"
+              >
+                <div style="width: 12.5%; height: 12.5%">8</div>
+                <div style="width: 12.5%; height: 12.5%">7</div>
+                <div style="width: 12.5%; height: 12.5%">6</div>
+                <div style="width: 12.5%; height: 12.5%">5</div>
+                <div style="width: 12.5%; height: 12.5%">4</div>
+                <div style="width: 12.5%; height: 12.5%">3</div>
+                <div style="width: 12.5%; height: 12.5%">2</div>
+                <div style="width: 12.5%; height: 12.5%">1</div>
+              </div>
+              <div class="chessboard" id="chessboard">
+                <div class="W" data-x="0" data-y="0">
+                  <img id="B" class="B_rook" src="images/B_rook.png" />
+                </div>
+                <div class="B" data-x="1" data-y="0">
+                  <img id="B" class="B_knight" src="images/B_knight.png" />
+                </div>
+                <div class="W" data-x="2" data-y="0">
+                  <img id="B" class="B_bishop" src="images/B_bishop.png" />
+                </div>
+                <div class="B" data-x="3" data-y="0">
+                  <img id="B" class="B_queen" src="images/B_queen.png" />
+                </div>
+                <div class="W" data-x="4" data-y="0">
+                  <img id="B" class="B_king" src="images/B_king.png" />
+                </div>
+                <div class="B" data-x="5" data-y="0">
+                  <img id="B" class="B_bishop" src="images/B_bishop.png" />
+                </div>
+                <div class="W" data-x="6" data-y="0">
+                  <img id="B" class="B_knight" src="images/B_knight.png" />
+                </div>
+                <div class="B" data-x="7" data-y="0">
+                  <img id="B" class="B_rook" src="images/B_rook.png" />
+                </div>
+                <div class="B" data-x="0" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="W" data-x="1" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="B" data-x="2" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="W" data-x="3" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="B" data-x="4" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="W" data-x="5" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="B" data-x="6" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="W" data-x="7" data-y="1">
+                  <img id="B" class="B_pawn" src="images/B_pawn.png" />
+                </div>
+                <div class="W" data-x="0" data-y="2"></div>
+                <div class="B" data-x="1" data-y="2"></div>
+                <div class="W" data-x="2" data-y="2"></div>
+                <div class="B" data-x="3" data-y="2"></div>
+                <div class="W" data-x="4" data-y="2"></div>
+                <div class="B" data-x="5" data-y="2"></div>
+                <div class="W" data-x="6" data-y="2"></div>
+                <div class="B" data-x="7" data-y="2"></div>
+                <div class="B" data-x="0" data-y="3"></div>
+                <div class="W" data-x="1" data-y="3"></div>
+                <div class="B" data-x="2" data-y="3"></div>
+                <div class="W" data-x="3" data-y="3"></div>
+                <div class="B" data-x="4" data-y="3"></div>
+                <div class="W" data-x="5" data-y="3"></div>
+                <div class="B" data-x="6" data-y="3"></div>
+                <div class="W" data-x="7" data-y="3"></div>
+                <div class="W" data-x="0" data-y="4"></div>
+                <div class="B" data-x="1" data-y="4"></div>
+                <div class="W" data-x="2" data-y="4"></div>
+                <div class="B" data-x="3" data-y="4"></div>
+                <div class="W" data-x="4" data-y="4"></div>
+                <div class="B" data-x="5" data-y="4"></div>
+                <div class="W" data-x="6" data-y="4"></div>
+                <div class="B" data-x="7" data-y="4"></div>
+                <div class="B" data-x="0" data-y="5"></div>
+                <div class="W" data-x="1" data-y="5"></div>
+                <div class="B" data-x="2" data-y="5"></div>
+                <div class="W" data-x="3" data-y="5"></div>
+                <div class="B" data-x="4" data-y="5"></div>
+                <div class="W" data-x="5" data-y="5"></div>
+                <div class="B" data-x="6" data-y="5"></div>
+                <div class="W" data-x="7" data-y="5"></div>
+                <div class="W" data-x="0" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="B" data-x="1" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="W" data-x="2" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="B" data-x="3" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="W" data-x="4" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="B" data-x="5" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="W" data-x="6" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="B" data-x="7" data-y="6">
+                  <img id="W" class="W_pawn" src="images/W_pawn.png" />
+                </div>
+                <div class="B" data-x="0" data-y="7">
+                  <img id="W" class="W_rook" src="images/W_rook.png" />
+                </div>
+                <div class="W" data-x="1" data-y="7">
+                  <img id="W" class="W_knight" src="images/W_knight.png" />
+                </div>
+                <div class="B" data-x="2" data-y="7">
+                  <img id="W" class="W_bishop" src="images/W_bishop.png" />
+                </div>
+                <div class="W" data-x="3" data-y="7">
+                  <img id="W" class="W_queen" src="images/W_queen.png" />
+                </div>
+                <div class="B" data-x="4" data-y="7">
+                  <img id="W" class="W_king" src="images/W_king.png" />
+                </div>
+                <div class="W" data-x="5" data-y="7">
+                  <img id="W" class="W_bishop" src="images/W_bishop.png" />
+                </div>
+                <div class="B" data-x="6" data-y="7">
+                  <img id="W" class="W_knight" src="images/W_knight.png" />
+                </div>
+                <div class="W" data-x="7" data-y="7">
+                  <img id="W" class="W_rook" src="images/W_rook.png" />
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                background-color: white;
+                width: 100%;
+                font-size: 25px;
+                margin-top: -5%;
+                text-align: right;
+              "
+              class="row"
+            >
+              <div style="width: 12.5%; height: 12.5%">A</div>
+              <div style="width: 12.5%; height: 12.5%">B</div>
+              <div style="width: 12.5%; height: 12.5%">C</div>
+              <div style="width: 12.5%; height: 12.5%">D</div>
+              <div style="width: 12.5%; height: 12.5%">E</div>
+              <div style="width: 12.5%; height: 12.5%">F</div>
+              <div style="width: 12.5%; height: 12.5%">G</div>
+              <div style="width: 12.5%; height: 12.5%">H</div>
+            </div>
+          </div>
+        </div>
+        <form id="poruke-forma">
+          <div
+            style="
+              width: 100%;
+              height: 85%;
+              max-height: 800px;
+              max-width: 400px;
+              background-color: #ffffffc7;
+              margin-top: 15%;
+              margin-left: 2%;
+              overflow: scroll;
+            "
+            id="messages"
+          ></div>
+          <div style="width: 90%; margin-left: 5%; margin-right: 5%">
+            <input
+              name="message"
+              class="form-control"
+              placeholder="Unesi poruku..."
+              required
+              autocomplete="off"
+              id="inputMessage"
+            />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="messageFormButton"
+              style="margin-top: 2%; margin-left: 48%"
+            >
+              Pošalji poruku
+            </button>
+          </div>
+        </form>
+        <div
+          style="
+            width: 10%;
+            height: 85%;
+            max-height: 660px;
+            max-width: 400px;
+            background-color: #ffffffc7;
+            margin-left: 5%;
+            margin-top: 5%;
+            overflow: scroll;
+          "
+          id="odigraniPotezi"
+        ></div>
+      </div>
+      <div style="visibility: hidden">
+        <div></div>
+        <div id="myTurn">false</div>
+      </div>
+      <div style="visibility: hidden">
+        <div></div>
+        <div id="myColor">B</div>
+      </div>
+      <div style="visibility: hidden">
+        <div></div>
+        <div id="firstMove">true</div>
+      </div>
+      <div style="visibility: hidden">
+        <div></div>
+        <div id="idGame"></div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="./public/js/socket.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+  </body>
+</html>

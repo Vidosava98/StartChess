@@ -36,11 +36,11 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/dashboard">Startna stranica</a>
+            <a class="nav-link" href="/dashboard">HomePage</a>
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-          <a href="/users/logout" class="btn btn-secondary">Odjavi se</a>
+          <a href="/users/logout" class="btn btn-secondary">Sign out</a>
         </form>
       </div>
     </nav>
@@ -51,7 +51,12 @@
           <h5 class="card-title"><%=name%></h5>
           <p class="card-text"><%=email%></p>
           <img
-            style="width: 40%; height: 40%"
+            style="
+              width: 200px;
+              height: 200px;
+              border-radius: 50%;
+              margin-bottom: 30px;
+            "
             src="data:image/jpeg;base64,<%=avatar%>"
           />
           <div class="card-text">
@@ -62,12 +67,11 @@
             Poslednja odigrana partija: <%= lastConnection.getDate() %>.<%=
             lastConnection.getMonth()%>.<%=lastConnection.getFullYear()%>.
           </div>
-          <a href="#" id="myRef1" class="card-link">Promeni šifru</a>
-          <p></p>
-          <a href="#" id="myRef2" class="card-link">Promeni ime</a>
-          <p></p>
-          <a href="#" id="myRef3" class="card-link">Promeni profilnu sliku</a>
-          <p></p>
+          <div class="row gap-4 justify-content-center text-color-[#FFFFFF]">
+            <a href="#" id="myRef1" class="card-link">New password</a>
+            <a href="#" id="myRef2" class="card-link">New name</a>
+            <a href="#" id="myRef3" class="card-link">New avatar</a>
+          </div>
           <div id="row1" class="row1"></div>
         </div>
       </div>

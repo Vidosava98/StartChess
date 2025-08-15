@@ -2,10 +2,14 @@
   <div class="col-md-6 m-auto">
     <div class="card card-body">
       <h1 class="text-center mb-3">
-        <i class="fas fa-user-plus"></i> Registracija
+        <i class="fas fa-user-plus"></i> Registration
       </h1>
       <%- include('./partials/messages.ejs') %>
-      <form action="/users/registracija" method="POST" enctype="multipart/form-data">
+      <form
+        action="/users/registracija"
+        method="POST"
+        enctype="multipart/form-data"
+      >
         <div class="form-group">
           <label for="name">Korsičnisko ime</label>
           <input
@@ -53,11 +57,12 @@
         <div class="form-group">
           <label for="avatar">Unesite sliku korisnika</label>
           <input
-            type="file" 
+            type="file"
             accept="image/png, image/jpeg"
             id="avatar"
             name="avatar"
-            class="form-control",
+            class="form-control"
+            ,
             value="<%= typeof avatar != 'undefined' ? avatar : '' %>"
             required
           />
@@ -67,7 +72,7 @@
         </button>
       </form>
       <p class="lead mt-4">
-        Već imate nalog? <a href="/users/login">Prijavite se</a>
+        Already have an account? <a href="/users/login">Sign in</a>
       </p>
     </div>
   </div>
