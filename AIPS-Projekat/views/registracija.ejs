@@ -11,13 +11,13 @@
         enctype="multipart/form-data"
       >
         <div class="form-group">
-          <label for="name">Korsičnisko ime</label>
+          <label for="name">Username</label>
           <input
             type="name"
             id="name"
             name="name"
             class="form-control"
-            placeholder="Unesite korisničko ime"
+            placeholder="Enter Username"
             value="<%= typeof name != 'undefined' ? name : '' %>"
           />
         </div>
@@ -28,34 +28,34 @@
             id="email"
             name="email"
             class="form-control"
-            placeholder="Unesite email"
+            placeholder="Enter email"
             value="<%= typeof email != 'undefined' ? email : '' %>"
           />
         </div>
         <div class="form-group">
-          <label for="password">Lozinka</label>
+          <label for="password">Password</label>
           <input
             type="password"
             id="password"
             name="password"
             class="form-control"
-            placeholder="Unesite lozinku"
+            placeholder="Enter password"
             value="<%= typeof password != 'undefined' ? password : '' %>"
           />
         </div>
         <div class="form-group">
-          <label for="password2">Potvrdite lozinku</label>
+          <label for="password2">Confirm password</label>
           <input
             type="password"
             id="password2"
             name="password2"
             class="form-control"
-            placeholder="Ponovo unesite lozinku"
+            placeholder="Enter password again"
             value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
           />
         </div>
         <div class="form-group">
-          <label for="avatar">Unesite sliku korisnika</label>
+          <label for="avatar"> Upload user photo</label>
           <input
             type="file"
             accept="image/png, image/jpeg"
@@ -68,7 +68,7 @@
           />
         </div>
         <button type="submit" class="btn btn-primary btn-block">
-          Registruj se
+          Register
         </button>
       </form>
       <p class="lead mt-4">
